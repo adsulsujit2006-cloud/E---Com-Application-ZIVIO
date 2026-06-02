@@ -37,7 +37,7 @@ public class User {
     @Column(nullable = false)
     private String fullName;
 
-    @Column(nullable = false)
+   // @Column(nullable = false)
     private String mobile;
 
     @Enumerated(EnumType.STRING)

@@ -1,11 +1,17 @@
 package com.zivio.responce;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class SignupRequest {
-    private String email;
-    private String fullName;
-    private String otp;
 
+    private String email;
+
+    private String fullName;
+
+    private String mobile;
+
+    private String password;
 }
