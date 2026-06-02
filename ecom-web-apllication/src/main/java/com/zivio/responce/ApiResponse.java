@@ -1,4 +1,4 @@
-package responce;
+package com.zivio.responce;
 
 import lombok.Data;
 
