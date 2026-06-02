@@ -1,10 +1,11 @@
-package model;
+package com.zivio.model;
 
 import java.util.HashSet;
 import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import domain.USER_ROLE;
+import com.zivio.domain.USER_ROLE;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

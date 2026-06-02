@@ -1,4 +1,4 @@
-package domain;
+package com.zivio.domain;
 
 public enum USER_ROLE {
 

@@ -1,11 +1,13 @@
-package model;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+package com.zivio.model;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,36 +15,27 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@Table(name = "transactions")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class CartItem {
+public class Transaction {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @ManyToOne
-    @JsonIgnore
-    private Cart cart;
 
     @ManyToOne
-    private Product product;
+    private User customer;
 
-    private String size;
+    @OneToOne
+    private Order order;
 
-    private int quantity = 1;
+    @ManyToOne
+    private Seller seller;
 
-    private Integer mrpPrice;
-
-    private Integer sellingPrice;
-
-    private Long userId;
-
-    
-
-
-
+    private LocalDateTime date = LocalDateTime.now();
 
 }
