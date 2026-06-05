@@ -7,6 +7,7 @@ import com.zivio.Service.AuthService;
 import com.zivio.domain.USER_ROLE;
 import com.zivio.model.VerificationCode;
 import com.zivio.repository.UserRepository;
+import com.zivio.request.LoginRequest;
 import com.zivio.responce.Apiresponce;
 import com.zivio.responce.AuthResponce;
 import com.zivio.responce.SignupRequest;
@@ -43,5 +44,15 @@ public class AuthController {
         res.setMessage("otp sent successfully");
 
         return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/signing")
+    public ResponseEntity<AuthResponce> loginHandler(@RequestBody LoginRequest req) throws Exception {
+
+       AuthResponce authResponce = authService.siging(req);
+
+        
+
+        return ResponseEntity.ok(authResponce);
     }
 }

@@ -1,13 +1,16 @@
 package com.zivio.Service.Impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,8 @@ import com.zivio.model.VerificationCode;
 import com.zivio.repository.CartRepository;
 import com.zivio.repository.UserRepository;
 import com.zivio.repository.VerificationCodeRepository;
+import com.zivio.request.LoginRequest;
+import com.zivio.responce.AuthResponce;
 import com.zivio.responce.SignupRequest;
 import com.zivio.utils.OtpUtil;
 
@@ -36,6 +41,8 @@ public class AuthServiceImpl implements AuthService {
     private final JwtProvider jwtProvider;
     private final VerificationCodeRepository verificationCodeRepository;
     private final EmailServcie emailServcie;
+    private final CustomUserServiceImpl customUserServiceImpl;
+
 
 
     @Override
@@ -106,6 +113,41 @@ public class AuthServiceImpl implements AuthService {
 
        emailServcie.sendVerificationOtpEmail(email, otp, subject, text);
 
+    }
+
+    @Override
+    public AuthResponce siging(LoginRequest req) {
+        String username = req.getEmail();
+        String otp = req.getOtp();
+
+        Authentication authentication = authenticate(username,otp);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String tooken = jwtProvider.generateToken(authentication);
+
+        AuthResponce authResponse = new AuthResponce();
+        authResponse.setJwt(tooken);
+        authResponse.setMessage("Login success");
+
+        Collection< ? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        String roleName = authorities.isEmpty()?null:authorities.iterator().next().getAuthority();
+        authResponse.setRole(USER_ROLE.valueOf(roleName));
+        return authResponse;
+      
+    }
+
+    private Authentication authenticate(String username, String otp) {
+        UserDetails userDetails = customUserServiceImpl.loadUserByUsername(username);
+        if(userDetails==null){
+           throw new BadCredentialsException("invalied username "); 
+        }
+
+        VerificationCode verificationCode = verificationCodeRepository.findByEmail(username);
+        if(verificationCode==null || !verificationCode.getOtp().equals(otp)){
+            throw new BadCredentialsException("wrong otp");
+        }
+        return new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
+       
     }
     
 }
