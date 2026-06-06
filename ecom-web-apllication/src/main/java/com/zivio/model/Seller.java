@@ -32,6 +32,7 @@ public class Seller {
     private Long id;
 
     private String sellerName;
+
     private String mobail;
 
     @Column(unique = true, nullable = false)
@@ -48,12 +49,13 @@ public class Seller {
     @OneToOne(cascade = CascadeType.ALL)
     private Address pickuAddress = new Address();
 
+    @Column(name = "gstin")
     private String GSTIN;
 
     @Enumerated(EnumType.STRING)
     private USER_ROLE role = USER_ROLE.ROLE_SELLER;
 
-    private boolean isEmilVarified = false;
+    private Boolean isEmilVarified = false;
 
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus = AccountStatus.PENDING_VERIFICATION;

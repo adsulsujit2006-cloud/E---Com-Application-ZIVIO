@@ -19,9 +19,11 @@ import com.zivio.Service.EmailServcie;
 import com.zivio.config.JwtProvider;
 import com.zivio.domain.USER_ROLE;
 import com.zivio.model.Cart;
+import com.zivio.model.Seller;
 import com.zivio.model.User;
 import com.zivio.model.VerificationCode;
 import com.zivio.repository.CartRepository;
+import com.zivio.repository.SellerRepository;
 import com.zivio.repository.UserRepository;
 import com.zivio.repository.VerificationCodeRepository;
 import com.zivio.request.LoginRequest;
@@ -35,21 +37,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final CartRepository cartRepository;
-    private final JwtProvider jwtProvider;
-    private final VerificationCodeRepository verificationCodeRepository;
-    private final EmailServcie emailServcie;
-    private final CustomUserServiceImpl customUserServiceImpl;
-
-
+    private final SellerRepository sellerRepository;
+private final UserRepository userRepository;
+private final PasswordEncoder passwordEncoder;
+private final CartRepository cartRepository;
+private final JwtProvider jwtProvider;
+private final VerificationCodeRepository verificationCodeRepository;
+private final EmailServcie emailService;
+private final CustomUserServiceImpl customUserServiceImpl;
 
     @Override
     public String createUser(SignupRequest req) throws Exception {
 
         VerificationCode verificationCode = verificationCodeRepository.findByEmail(req.getEmail());
-        if(verificationCode==null || !verificationCode.getOtp().equals(req.getOtp())){
+        if (verificationCode == null || !verificationCode.getOtp().equals(req.getOtp())) {
             throw new Exception("wrong otp");
         }
         User user = userRepository.findByEmail(req.getEmail());
@@ -77,50 +78,70 @@ public class AuthServiceImpl implements AuthService {
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 req.getEmail(),
                 null,
-                authorities
-        );
+                authorities);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return jwtProvider.generateToken(authentication);
     }
 
-    @Override
-    public void sentLoginOtp(String email) throws Exception {
-       String SIGNING_PREFIX = "signin_";
+ @Override
+public void sentLoginOtp(String email, USER_ROLE role) throws Exception {
 
-       if(email.startsWith(SIGNING_PREFIX)){
-        email = email.substring(SIGNING_PREFIX.length());
-        User user = userRepository.findByEmail(email);
-        if(user==null){
-            throw new Exception("user not exist with provided email");
-        }
-       }
-       VerificationCode isExist = verificationCodeRepository.findByEmail(email);
+    String SIGNING_PREFIX = "signing_";
 
-       if(isExist !=null){
-        verificationCodeRepository.delete(isExist);
-       }
-       String otp = OtpUtil.generateOtp();
-       VerificationCode verificationCode = new VerificationCode();
-       verificationCode.setOtp(otp);
-       verificationCode.setEmail(email);
-       verificationCodeRepository.save(verificationCode);
-
-       String subject="ZIVIO bazar login/signup otp";
-       String text = "your loin/signup otp is - ";
-
-
-       emailServcie.sendVerificationOtpEmail(email, otp, subject, text);
-
+    if (email == null || email.isBlank()) {
+        throw new Exception("email is required");
     }
+
+    if (email.startsWith(SIGNING_PREFIX)) {
+
+        email = email.substring(SIGNING_PREFIX.length());
+
+        if (role != null && role.equals(USER_ROLE.ROLE_SELLER)) {
+
+            Seller seller = sellerRepository.findByEmail(email);
+
+            if (seller == null) {
+                throw new Exception("seller not exist with provided email");
+            }
+
+        } else {
+
+            User user = userRepository.findByEmail(email);
+
+            if (user == null) {
+                throw new Exception("user not exist with provided email");
+            }
+        }
+    }
+
+    VerificationCode isExist = verificationCodeRepository.findByEmail(email);
+
+    if (isExist != null) {
+        verificationCodeRepository.delete(isExist);
+    }
+
+    String otp = OtpUtil.generateOtp();
+
+    VerificationCode verificationCode = new VerificationCode();
+    verificationCode.setOtp(otp);
+    verificationCode.setEmail(email);
+
+    verificationCodeRepository.save(verificationCode);
+
+    String subject = "ZIVIO bazar login/signup otp";
+    String text = "Your login/signup otp is - " + otp;
+
+    emailService.sendVerificationOtpEmail(email, otp, subject, text);
+}
 
     @Override
     public AuthResponce siging(LoginRequest req) {
         String username = req.getEmail();
         String otp = req.getOtp();
 
-        Authentication authentication = authenticate(username,otp);
+        Authentication authentication = authenticate(username, otp);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String tooken = jwtProvider.generateToken(authentication);
@@ -129,25 +150,25 @@ public class AuthServiceImpl implements AuthService {
         authResponse.setJwt(tooken);
         authResponse.setMessage("Login success");
 
-        Collection< ? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        String roleName = authorities.isEmpty()?null:authorities.iterator().next().getAuthority();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        String roleName = authorities.isEmpty() ? null : authorities.iterator().next().getAuthority();
         authResponse.setRole(USER_ROLE.valueOf(roleName));
         return authResponse;
-      
+
     }
 
     private Authentication authenticate(String username, String otp) {
         UserDetails userDetails = customUserServiceImpl.loadUserByUsername(username);
-        if(userDetails==null){
-           throw new BadCredentialsException("invalied username "); 
+        if (userDetails == null) {
+            throw new BadCredentialsException("invalied username ");
         }
 
         VerificationCode verificationCode = verificationCodeRepository.findByEmail(username);
-        if(verificationCode==null || !verificationCode.getOtp().equals(otp)){
+        if (verificationCode == null || !verificationCode.getOtp().equals(otp)) {
             throw new BadCredentialsException("wrong otp");
         }
-        return new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
-       
+        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
     }
-    
+
 }

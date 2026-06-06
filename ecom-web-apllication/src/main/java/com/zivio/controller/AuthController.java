@@ -7,6 +7,7 @@ import com.zivio.Service.AuthService;
 import com.zivio.domain.USER_ROLE;
 import com.zivio.model.VerificationCode;
 import com.zivio.repository.UserRepository;
+import com.zivio.request.LoginOtpRequest;
 import com.zivio.request.LoginRequest;
 import com.zivio.responce.Apiresponce;
 import com.zivio.responce.AuthResponce;
@@ -36,9 +37,9 @@ public class AuthController {
     }
 
     @PostMapping("/send/signup-otp")
-    public ResponseEntity<Apiresponce> sentOtpHandler(@RequestBody VerificationCode req) throws Exception {
+    public ResponseEntity<Apiresponce> sentOtpHandler(@RequestBody LoginOtpRequest req) throws Exception {
 
-        authService.sentLoginOtp(req.getEmail());
+        authService.sentLoginOtp(req.getEmail(),req.getRole());
 
         Apiresponce res = new Apiresponce();
         res.setMessage("otp sent successfully");
