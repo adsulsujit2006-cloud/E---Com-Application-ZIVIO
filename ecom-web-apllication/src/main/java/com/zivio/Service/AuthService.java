@@ -8,7 +8,7 @@ import com.zivio.responce.SignupRequest;
 public interface AuthService {
     void sentLoginOtp(String email,USER_ROLE role) throws Exception;
 String createUser(SignupRequest req) throws Exception;
-AuthResponce siging(LoginRequest req);
+AuthResponce siging(LoginRequest req) throws Exception;
 
 
 }

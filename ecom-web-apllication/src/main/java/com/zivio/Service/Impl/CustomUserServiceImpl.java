@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 import com.zivio.domain.USER_ROLE;
@@ -18,49 +18,63 @@ import com.zivio.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class CustomUserServiceImpl implements UserDetailsService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     private final SellerRepository sellerRepository;
+
     private static final String SELLER_PREFIX = "seller_";
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if(username.startsWith(SELLER_PREFIX)){
+   @Override
+public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-            String actualUsername = username.substring(SELLER_PREFIX.length());
-            Seller seller = sellerRepository.findByEmail(actualUsername);
-        
-            if(seller !=null){
-                return buildUserDetails(seller.getEmail(), seller.getPassword(), seller.getRole());
+    String SELLER_PREFIX = "seller_";
 
-            }
-        }else{
-            User user = userRepository.findByEmail(username);
-            if(user !=null){
-                return buildUserDetails(user.getEmail(),user.getPassword(),user.getRole());
-            }
+    if (username.startsWith(SELLER_PREFIX)) {
+
+        String email = username.substring(SELLER_PREFIX.length());
+
+        Seller seller = sellerRepository.findByEmail(email);
+
+        if (seller == null) {
+            throw new UsernameNotFoundException("seller not found with email " + email);
         }
-        throw new UsernameNotFoundException("user or seller not found with email"+username);
+
+        return buildUserDetails(
+                seller.getEmail(),
+                seller.getPassword(),
+                seller.getRole()
+        );
     }
 
-    private UserDetails buildUserDetails(String email, String password, USER_ROLE role) {
+    User user = userRepository.findByEmail(username);
 
-    if (role == null) {
-        role = USER_ROLE.ROLE_CUSTOMER;
+    if (user == null) {
+        throw new UsernameNotFoundException("user not found with email " + username);
     }
 
-    List<GrantedAuthority> authorityList = new ArrayList<>();
-
-    authorityList.add(new SimpleGrantedAuthority(role.toString()));
-
-    return new org.springframework.security.core.userdetails.User(
-            email,
-            password,
-            authorityList
+    return buildUserDetails(
+            user.getEmail(),
+            user.getPassword(),
+            user.getRole()
     );
 }
 
+    private UserDetails buildUserDetails(String email, String password, USER_ROLE role) {
+
+        if (role == null) {
+            role = USER_ROLE.ROLE_CUSTOMER;
+        }
+
+        List<GrantedAuthority> authorityList = new ArrayList<>();
+        authorityList.add(new SimpleGrantedAuthority(role.toString()));
+
+        return new org.springframework.security.core.userdetails.User(
+                email,
+                password,
+                authorityList
+        );
+    }
 }

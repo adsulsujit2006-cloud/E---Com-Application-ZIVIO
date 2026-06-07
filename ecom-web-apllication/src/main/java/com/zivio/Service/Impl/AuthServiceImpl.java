@@ -137,7 +137,7 @@ public void sentLoginOtp(String email, USER_ROLE role) throws Exception {
 }
 
     @Override
-    public AuthResponce siging(LoginRequest req) {
+    public AuthResponce siging(LoginRequest req) throws Exception {
         String username = req.getEmail();
         String otp = req.getOtp();
 
@@ -157,18 +157,30 @@ public void sentLoginOtp(String email, USER_ROLE role) throws Exception {
 
     }
 
-    private Authentication authenticate(String username, String otp) {
-        UserDetails userDetails = customUserServiceImpl.loadUserByUsername(username);
-        if (userDetails == null) {
-            throw new BadCredentialsException("invalied username ");
-        }
+   private Authentication authenticate(String username, String otp) throws Exception {
 
-        VerificationCode verificationCode = verificationCodeRepository.findByEmail(username);
-        if (verificationCode == null || !verificationCode.getOtp().equals(otp)) {
-            throw new BadCredentialsException("wrong otp");
-        }
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+     UserDetails userDetails = customUserServiceImpl.loadUserByUsername(username);
+    String SELLER_PREFIX = "seller_";
 
+
+
+    if (username.startsWith(SELLER_PREFIX)) {
+        username=username.substring(SELLER_PREFIX.length());
+    }
+    if(userDetails==null){
+        throw new Exception("Invalied username");
     }
 
+    VerificationCode verificationCode = verificationCodeRepository.findByEmail(username);
+
+    if (verificationCode == null || !verificationCode.getOtp().equals(otp)) {
+        throw new Exception("wrong otp");
+    }
+
+    return new UsernamePasswordAuthenticationToken(
+            userDetails,
+            null,
+            userDetails.getAuthorities()
+    );
+}
 }

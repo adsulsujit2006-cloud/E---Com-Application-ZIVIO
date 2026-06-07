@@ -42,46 +42,64 @@ public class SellerController {
 
     public ResponseEntity<AuthResponce> loginSeller(
             @RequestBody LoginRequest req) throws Exception {
+                
 
         String otp = req.getOtp();
         String email = req.getEmail();
+        System.out.println(email+" "+otp);
         req.setEmail("seller_" + email);
         AuthResponce authResponce = authService.siging(req);
         return ResponseEntity.ok(authResponce);
 
     }
 
-    @PostMapping("/verify/{otp}")
-    public ResponseEntity<Seller> verifySellerEmail(@PathVariable String otp) throws Exception {
-        VerificationCode verificationCode = verificationCodeRepository.findByOtp(otp);
-        if (verificationCode == null || verificationCode.getOtp().equals(otp)) {
-            throw new Exception("wrong otp..");
+   @PatchMapping("/verify/{otp}")
+public ResponseEntity<Seller> verifySellerEmail(@PathVariable String otp) throws Exception {
 
-        }
-        Seller seller = sellerService.verifyEmail(verificationCode.getEmail(), otp);
-        return new ResponseEntity<>(seller, HttpStatus.OK);
+    VerificationCode verificationCode = verificationCodeRepository.findByOtp(otp);
 
+    if (verificationCode == null || !verificationCode.getOtp().equals(otp)) {
+        throw new Exception("wrong otp..");
     }
 
-    @PostMapping
-    public ResponseEntity<Seller> createSeller(
-            @RequestBody Seller seller) throws Exception {
-        Seller savedSeller = sellerService.createSeller(seller);
-        String otp = OtpUtil.generateOtp();
+    Seller seller = sellerService.verifyEmail(verificationCode.getEmail(), otp);
 
-        VerificationCode verificationCode = new VerificationCode();
-        verificationCode.setOtp(otp);
-        verificationCode.setEmail(seller.getEmail());
-        verificationCodeRepository.save(verificationCode);
+    return new ResponseEntity<>(seller, HttpStatus.OK);
+}
+   @PostMapping
+public ResponseEntity<Seller> createSeller(
+        @RequestBody Seller seller) throws Exception {
 
-        String subject = "ZIVIO Bazar Email Verification Code";
-        String text = "Welcome to ZIVIO Bazar , verify account using this link *";
-        String frontend_url = "http://localhost:3000/verify-seller/*";
-        emailServcie.sendVerificationOtpEmail(seller.getEmail(), verificationCode.getOtp(), subject,
-                text + frontend_url);
-        return new ResponseEntity<>(savedSeller, HttpStatus.CREATED);
+    Seller savedSeller = sellerService.createSeller(seller);
 
+    String email = savedSeller.getEmail().trim();
+
+    VerificationCode isExist = verificationCodeRepository.findByEmail(email);
+
+    if (isExist != null) {
+        verificationCodeRepository.delete(isExist);
     }
+
+    String otp = OtpUtil.generateOtp();
+
+    VerificationCode verificationCode = new VerificationCode();
+    verificationCode.setOtp(otp);
+    verificationCode.setEmail(email);
+    verificationCodeRepository.save(verificationCode);
+
+    String subject = "ZIVIO Bazar Email Verification Code";
+    String text = "Welcome to ZIVIO Bazar, verify your account using this OTP: ";
+    String frontend_url = " http://localhost:3000/verify-seller/";
+
+    emailServcie.sendVerificationOtpEmail(
+            email,
+            verificationCode.getOtp(),
+            subject,
+            text + otp + frontend_url
+    );
+
+    return new ResponseEntity<>(savedSeller, HttpStatus.CREATED);
+}
 
     @GetMapping("/{id}")
     public ResponseEntity<Seller> getSellerById(@PathVariable Long id) throws Exception {
