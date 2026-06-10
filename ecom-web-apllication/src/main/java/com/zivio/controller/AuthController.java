@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.zivio.Service.AuthService;
 import com.zivio.domain.USER_ROLE;
-import com.zivio.model.VerificationCode;
-import com.zivio.repository.UserRepository;
+// import com.zivio.model.VerificationCode;
+// import com.zivio.repository.UserRepository;
 import com.zivio.request.LoginOtpRequest;
 import com.zivio.request.LoginRequest;
 import com.zivio.responce.Apiresponce;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UserRepository userRepository;
+   // private final UserRepository userRepository;
     private final AuthService authService;
 
     @PostMapping("/signup")

@@ -21,4 +21,14 @@ public class GlobleException {
         return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);
         
     }
+     @ExceptionHandler(ProductException.class)
+    public ResponseEntity<ErrorDetails> ProductExceptionHandler(SellerException se , WebRequest req){
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setError(se.getMessage());
+        errorDetails.setDetails(req.getDescription(false));
+        errorDetails.setTimestamp(LocalDateTime.now());
+
+        return new ResponseEntity<>(errorDetails,HttpStatus.BAD_REQUEST);
+        
+    }
 }
