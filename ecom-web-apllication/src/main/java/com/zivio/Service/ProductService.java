@@ -14,7 +14,7 @@ public interface ProductService {
     public Product createProduct(CreateProductRequest req,Seller seller); 
     public void deleteProduct(Long productId) throws ProductException;
     public Product updateProduct(Long productId,Product product) throws ProductException;
-    Product findProductById(Long productId) throws ProductException;
+    Product findProductById(long productId) throws ProductException;
     List<Product> searchProducts(String query);
     public Page<Product> getAllProducts(
         String category,

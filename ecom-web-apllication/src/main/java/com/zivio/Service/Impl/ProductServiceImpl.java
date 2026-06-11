@@ -86,8 +86,7 @@ public Product createProduct(CreateProductRequest req, Seller seller) {
     product.setSizes(req.getSizes());
     product.setDiscountPercent(discountPercentage);
 
-    // You forgot this line
-   // product.setQuantity(req.getQuantity());
+
 
     return productRepository.save(product);
 }
@@ -118,11 +117,7 @@ public Product createProduct(CreateProductRequest req, Seller seller) {
 
     }
 
-    @Override
-    public Product findProductById(Long productId) throws ProductException {
-        return productRepository.findById(productId)
-                .orElseThrow(() -> new ProductException("Product not found with id " + productId));
-    }
+   
 
     @Override
     public List<Product> searchProducts(String query) {
@@ -209,5 +204,11 @@ public Product createProduct(CreateProductRequest req, Seller seller) {
     public List<Product> getProductBySellerId(Long sellerId) {
         return productRepository.findBySellerId(sellerId);
 
+    }
+
+    @Override
+    public Product findProductById(long productId) throws ProductException {
+          return productRepository.findById(productId)
+                .orElseThrow(() -> new ProductException("Product not found with id " + productId));
     }
 }
