@@ -1,9 +1,10 @@
 package com.zivio.model;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zivio.domain.OrderStstus;
+import com.zivio.domain.OrderStatus;
 import com.zivio.domain.PaymentStatus;
 
 import jakarta.persistence.CascadeType;
@@ -59,7 +60,7 @@ public class Order {
     private Integer discount;
 
     @Enumerated(EnumType.STRING)
-    private OrderStstus orderStatus;
+    private OrderStatus orderStatus;
 
     private int totalItem;
 

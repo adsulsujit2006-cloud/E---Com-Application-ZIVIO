@@ -1,11 +1,11 @@
 package com.zivio.domain;
 
-public enum OrderStstus {
+public enum OrderStatus {
+
     PENDING,
     PLACED,
-    CONFIRMD,
+    CONFIRMED,
     SHIPPED,
     DELIVERED,
     CANCELLED
-
 }
