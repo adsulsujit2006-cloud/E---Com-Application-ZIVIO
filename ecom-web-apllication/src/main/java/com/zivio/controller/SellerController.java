@@ -1,6 +1,7 @@
 package com.zivio.controller;
 
 import com.zivio.Service.EmailServcie;
+import com.zivio.Service.SellerReportService;
 
 import java.util.List;
 
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.zivio.Service.AuthService;
 import com.zivio.Service.SellerService;
 import com.zivio.domain.AccountStatus;
+import com.zivio.exceptions.SellerException;
 import com.zivio.model.Seller;
+import com.zivio.model.SellerReport;
 import com.zivio.model.VerificationCode;
 import com.zivio.repository.VerificationCodeRepository;
 import com.zivio.request.LoginRequest;
@@ -37,69 +40,69 @@ public class SellerController {
     private final SellerService sellerService;
     private final VerificationCodeRepository verificationCodeRepository;
     private final AuthService authService;
+    private final SellerReportService sellerReportService;
 
     @PostMapping("/login")
 
     public ResponseEntity<AuthResponce> loginSeller(
             @RequestBody LoginRequest req) throws Exception {
-                
 
         String otp = req.getOtp();
         String email = req.getEmail();
-        System.out.println(email+" "+otp);
+        System.out.println(email + " " + otp);
         req.setEmail("seller_" + email);
         AuthResponce authResponce = authService.siging(req);
         return ResponseEntity.ok(authResponce);
 
     }
 
-   @PatchMapping("/verify/{otp}")
-public ResponseEntity<Seller> verifySellerEmail(@PathVariable String otp) throws Exception {
+    @PatchMapping("/verify/{otp}")
+    public ResponseEntity<Seller> verifySellerEmail(@PathVariable String otp) throws Exception {
 
-    VerificationCode verificationCode = verificationCodeRepository.findByOtp(otp);
+        VerificationCode verificationCode = verificationCodeRepository.findByOtp(otp);
 
-    if (verificationCode == null || !verificationCode.getOtp().equals(otp)) {
-        throw new Exception("wrong otp..");
+        if (verificationCode == null || !verificationCode.getOtp().equals(otp)) {
+            throw new Exception("wrong otp..");
+        }
+
+        Seller seller = sellerService.verifyEmail(verificationCode.getEmail(), otp);
+
+        return new ResponseEntity<>(seller, HttpStatus.OK);
     }
 
-    Seller seller = sellerService.verifyEmail(verificationCode.getEmail(), otp);
+    @PostMapping
+    public ResponseEntity<Seller> createSeller(
+            @RequestBody Seller seller) throws Exception {
 
-    return new ResponseEntity<>(seller, HttpStatus.OK);
-}
-   @PostMapping
-public ResponseEntity<Seller> createSeller(
-        @RequestBody Seller seller) throws Exception {
+        Seller savedSeller = sellerService.createSeller(seller);
 
-    Seller savedSeller = sellerService.createSeller(seller);
+        String email = savedSeller.getEmail().trim();
 
-    String email = savedSeller.getEmail().trim();
+        VerificationCode isExist = verificationCodeRepository.findByEmail(email);
 
-    VerificationCode isExist = verificationCodeRepository.findByEmail(email);
+        if (isExist != null) {
+            verificationCodeRepository.delete(isExist);
+        }
 
-    if (isExist != null) {
-        verificationCodeRepository.delete(isExist);
+        String otp = OtpUtil.generateOtp();
+
+        VerificationCode verificationCode = new VerificationCode();
+        verificationCode.setOtp(otp);
+        verificationCode.setEmail(email);
+        verificationCodeRepository.save(verificationCode);
+
+        String subject = "ZIVIO Bazar Email Verification Code";
+        String text = "Welcome to ZIVIO Bazar, verify your account using this OTP: ";
+        String frontend_url = " http://localhost:3000/verify-seller/";
+
+        emailServcie.sendVerificationOtpEmail(
+                email,
+                verificationCode.getOtp(),
+                subject,
+                text + otp + frontend_url);
+
+        return new ResponseEntity<>(savedSeller, HttpStatus.CREATED);
     }
-
-    String otp = OtpUtil.generateOtp();
-
-    VerificationCode verificationCode = new VerificationCode();
-    verificationCode.setOtp(otp);
-    verificationCode.setEmail(email);
-    verificationCodeRepository.save(verificationCode);
-
-    String subject = "ZIVIO Bazar Email Verification Code";
-    String text = "Welcome to ZIVIO Bazar, verify your account using this OTP: ";
-    String frontend_url = " http://localhost:3000/verify-seller/";
-
-    emailServcie.sendVerificationOtpEmail(
-            email,
-            verificationCode.getOtp(),
-            subject,
-            text + otp + frontend_url
-    );
-
-    return new ResponseEntity<>(savedSeller, HttpStatus.CREATED);
-}
 
     @GetMapping("/{id}")
     public ResponseEntity<Seller> getSellerById(@PathVariable Long id) throws Exception {
@@ -117,9 +120,13 @@ public ResponseEntity<Seller> createSeller(
 
     }
 
-    // public ResponseEntity<SellerReport> getSellerReport{
+    public ResponseEntity<SellerReport> getSellerReport(
+            @RequestHeader("Authorization") String jwt) throws SellerException, Exception {
+        Seller seller = sellerService.getSellerProfile(jwt);
+        SellerReport report = sellerReportService.getSellerReport(seller);
+        return new ResponseEntity<>(report, HttpStatus.OK);
 
-    // }
+    }
 
     @GetMapping
     public ResponseEntity<List<Seller>> getAllSellers(
@@ -137,7 +144,7 @@ public ResponseEntity<Seller> createSeller(
         return ResponseEntity.ok(updatedSeller);
     }
 
-    public ResponseEntity<Void> deleteSeller(@PathVariable Long id) throws Exception{
+    public ResponseEntity<Void> deleteSeller(@PathVariable Long id) throws Exception {
         sellerService.deleteSeller(id);
         return ResponseEntity.noContent().build();
     }

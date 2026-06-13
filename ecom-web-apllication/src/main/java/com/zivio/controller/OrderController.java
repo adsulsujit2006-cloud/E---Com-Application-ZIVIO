@@ -16,12 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zivio.Service.CartService;
 import com.zivio.Service.OrderService;
+import com.zivio.Service.SellerReportService;
+import com.zivio.Service.SellerService;
 import com.zivio.Service.UserService;
 import com.zivio.domain.PaymentMethod;
 import com.zivio.model.Address;
 import com.zivio.model.Cart;
 import com.zivio.model.Order;
 import com.zivio.model.OrderItem;
+import com.zivio.model.Seller;
+import com.zivio.model.SellerReport;
 import com.zivio.model.User;
 import com.zivio.responce.PaymentLinkResponse;
 
@@ -35,6 +39,8 @@ public class OrderController {
     private final OrderService orderService;
     private final UserService userService;
     private final CartService cartService;
+    private final SellerService sellerService;
+    private final SellerReportService sellerReportService;
 
 
   @PostMapping()
@@ -78,8 +84,19 @@ public ResponseEntity<OrderItem> getOrderById(
 public ResponseEntity<Order> cancleOrder(
     @PathVariable Long orderId,
     @RequestHeader("Authorization") String jwt
-){
-    return null;
+) throws Exception{
+    User user = userService.findUserByJwtToken(jwt);
+    Order order = orderService.cancleOrder(orderId, user);
+
+    Seller seller = sellerService.getSellerById(order.getSellerId());
+    SellerReport report = sellerReportService.getSellerReport(seller);
+
+    report.setCancledOrders(report.getCancledOrders()+1);
+    report.setTotalRefunds(report.getTotalRefunds()+order.getTotalSellingPrice());
+    sellerReportService.updateSellerReport(report);
+
+
+    return ResponseEntity.ok(order);
     
 }
 
