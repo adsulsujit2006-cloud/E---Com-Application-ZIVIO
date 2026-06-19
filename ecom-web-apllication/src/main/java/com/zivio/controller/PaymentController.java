@@ -13,6 +13,7 @@ import com.zivio.Service.OrderService;
 import com.zivio.Service.PaymentService;
 import com.zivio.Service.SellerReportService;
 import com.zivio.Service.SellerService;
+import com.zivio.Service.TransactionService;
 import com.zivio.Service.UserService;
 import com.zivio.model.Order;
 import com.zivio.model.PaymentOrder;
@@ -33,6 +34,7 @@ public class PaymentController {
     private final SellerService sellerService;
     private final OrderService orderService;
     private final SellerReportService sellerReportService;
+    private final TransactionService transactionService;
 
     @GetMapping("/{paymentId}")
     public ResponseEntity<Apiresponce> paymentSuccessHandler(
@@ -53,7 +55,7 @@ public class PaymentController {
 
             for (Order order : paymentOrder.getOrders()) {
 
-                // transactionService.createTransaction(order);
+                transactionService.createTransaction(order);
 
                 Seller seller = sellerService.getSellerById(order.getSellerId());
 
