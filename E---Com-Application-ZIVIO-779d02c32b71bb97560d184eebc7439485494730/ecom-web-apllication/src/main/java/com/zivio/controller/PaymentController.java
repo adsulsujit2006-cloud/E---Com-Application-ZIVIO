@@ -21,7 +21,7 @@ import com.zivio.model.Seller;
 import com.zivio.model.SellerReport;
 import com.zivio.model.User;
 import com.zivio.responce.Apiresponce;
-import com.zivio.responce.PaymentLinkResponse;
+
 
 import lombok.RequiredArgsConstructor;
 
