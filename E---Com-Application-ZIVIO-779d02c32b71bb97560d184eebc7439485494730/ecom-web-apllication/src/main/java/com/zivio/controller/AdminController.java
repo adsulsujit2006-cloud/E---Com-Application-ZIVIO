@@ -2,6 +2,7 @@ package com.zivio.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zivio.Service.SellerService;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class AdminController {
 
     private final SellerService sellerService;
@@ -21,6 +23,7 @@ public class AdminController {
     {
         Seller updatedSeller = sellerService.updateSellerAccountStatus(id, status);
         
-        return null;} 
+        return ResponseEntity.ok(updatedSeller);
+    } 
 
 }
