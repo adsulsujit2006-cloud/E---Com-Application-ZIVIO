@@ -1,24 +1,18 @@
 import React from 'react';
 import logo from './logo.svg';
+// @ts-ignore: Allow side-effect import of CSS without type declarations
 import './App.css';
+import { Button } from '@mui/material';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { AddShoppingCart } from '@mui/icons-material';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="">
+     <h1 className="font-bold text-5xl">Hello Sujit</h1>
+
+     <Button variant='contained'>sujit zivio bajar</Button>
+     <AddShoppingCart/>
     </div>
   );
 }
