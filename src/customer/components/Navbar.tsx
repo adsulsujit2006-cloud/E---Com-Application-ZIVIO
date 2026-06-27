@@ -28,29 +28,36 @@ const Navbar = () => {
 
           {/* Left Side */}
           <div className="flex items-center gap-9">
-            <IconButton>
+            {!isLarge && <IconButton>
               <MenuIcon />
             </IconButton>
-
-            <h1 className="logo cursor-pointer text-lg md:text-2xl text-[#2F414A]">
+}
+            <h1 className="logo cursor-pointer text-lg md:text-3xl text-[#2F414A]">
               ZIVIO
             </h1>
           </div >
-<ul className='flex items-center font-medium text-gray-800'>
-  {["Men","Women","Home & Furniture","Electronics","Beauty & Health","Kids","Shoes"].map((item)=><li
-  className='mainCategory hover:text-primary-color 
+
+          <ul className='flex items-center font-medium text-gray-800'>
+            {["Men", "Women", "Home", "Electronics", "Beauty", "Kids  ", "GENZ"].map((item) => <li
+              className='mainCategory hover:text-primary-color 
   hover:border-b-2 h-[70px] px-4 border-primary-color
   flex items-center'>
-    {item}
-  </li>)}
-  <li></li>
-</ul>
+              {item}
+            </li>)}
+            <li></li>
+          </ul>
+          <div className="hidden md:flex items-center flex-1 max-w-[500px] h-[44px] bg-gray-100 border border-gray-300 rounded-lg overflow-hidden mx-6">
+            <SearchIcon className="mx-3 text-gray-500" />
+
+            <input
+              type="text"
+              placeholder="Search Products, Brands and More..."
+              className="flex-1 h-full bg-transparent outline-none text-sm text-gray-700 placeholder:text-gray-500 pr-3"
+            />
+          </div>
           {/* Right Side */}
           <div className="flex gap-1 lg:gap-6 items-center">
 
-            <IconButton>
-              <SearchIcon />
-            </IconButton>
 
             {false ? (
               <Button className="flex items-center gap-2">
@@ -70,13 +77,13 @@ const Navbar = () => {
             )}
 
             <IconButton>
-              <FavoriteBorder sx={{ fontSize: 29 }} />
+              <FavoriteBorder sx={{ fontSize: 20 }} />
             </IconButton>
 
             <IconButton>
               <AddShoppingCart
                 className="text-gray-700"
-                sx={{ fontSize: 29 }}
+                sx={{ fontSize: 20 }}
               />
             </IconButton>
 
@@ -85,7 +92,7 @@ const Navbar = () => {
                 startIcon={<Storefront />}
                 variant="outlined"
               >
-                Become Seller
+                Seller
               </Button>
             )}
 
