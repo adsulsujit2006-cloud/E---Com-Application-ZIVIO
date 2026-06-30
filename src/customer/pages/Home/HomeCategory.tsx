@@ -31,11 +31,11 @@ const HomeCategory = () => {
                     <h1>Sell your Product</h1>
                     <p className='text-lg md:text-2xl'>With <span className='logo'>ZIVIO</span></p>
                     <div className='pt-6 flex justify-center'>
-                        <Button startIcon ={<Storefront/>} variant='contained' size='large'>
+                        <Button startIcon={<Storefront />} variant='contained' size='large'>
                             Become Seller
                         </Button>
                     </div>
-                    
+
                 </div>
             </section>
         </div>
