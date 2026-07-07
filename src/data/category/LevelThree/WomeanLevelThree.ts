@@ -51,7 +51,7 @@ export const womeanLevlThree = [
         "name": "Lehenga Cholis",
         "categoryId": "womean_lehenga_cholis",
         "parentCategoryName": "Indian & Fusion Wear",
-         "parentCategoryId": "women_indian_and_fusion_wear"
+        "parentCategoryId": "women_indian_and_fusion_wear"
     },
     {
         "name": "Dupattas & Shawls",
@@ -63,7 +63,7 @@ export const womeanLevlThree = [
         "name": "Jackets",
         "categoryId": "womean_jackets",
         "parentCategoryName": "Indian & Fusion Wear",
-         "parentCategoryId": "women_indian_and_fusion_wear"
+        "parentCategoryId": "women_indian_and_fusion_wear"
     },
     {
         "name": "Tops",
@@ -136,132 +136,157 @@ export const womeanLevlThree = [
         "categoryId": "women_blazers_and_waistcoats",
         "parentCategoryName": "Western Wear",
         "parentCategoryId": "women_western_wear"
-    },{
-    "name":"Flats",
-    "categoryId":"women_flats",
-    "parentCategoryName":"Footwear",
-    "parentCategoryId":"women_footwear"
-},
-{
-    "name":"Casual Shoes",
-    "categoryId":"women_casual_shoes",
-    "parentCategoryName":"Footwear",
-    "parentCategoryId":"women_footwear"
-},
-{
-    "name":"Heels",
-    "categoryId":"women_heels",
-    "parentCategoryName":"Footwear",
-    "parentCategoryId":"women_footwear"
-},
-{
-    "name":"Boots",
-    "categoryId":"women_boots",
-    "parentCategoryName":"Footwear",
-    "parentCategoryId":"women_footwear"
-},
-{
-    "name":"Sports Shoes & Floaters",
-    "categoryId":"women_sports_shoes_and_floaters",
-    "parentCategoryName":"Footwear",
-    "parentCategoryId":"women_footwear"
-},
-{
-    "name":"Clothing",
-    "categoryId":"women_sports_clothing",
-    "parentCategoryName":"Sports & Active Wear",
-    "parentCategoryId":"women_sports_and_active_wear"
-},
-{
-    "name":"Footwear",
-    "categoryId":"women_sports_footwear",
-    "parentCategoryName":"Sports & Active Wear",
-    "parentCategoryId":"women_sports_and_active_wear"
-},
-{
-    "name":"Sports Accessories",
-    "categoryId":"women_sports_accessories",
-    "parentCategoryName":"Sports & Active Wear",
-    "parentCategoryId":"women_sports_and_active_wear"
-},
-{
-    "name":"Sports Equipment",
-    "categoryId":"women_sports_equipment",
-    "parentCategoryName":"Sports & Active Wear",
-    "parentCategoryId":"women_sports_and_active_wear"
-},
-{
-    "name":"Makeup",
-    "categoryId":"women_makeup",
-    "parentCategoryName":"Beauty & Personal Care",
-    "parentCategoryId":"women_beauty_and_personal_care"
-},
-{
-    "name":"Skincare",
-    "categoryId":"women_skincare",
-    "parentCategoryName":"Beauty & Personal Care",
-    "parentCategoryId":"women_beauty_and_personal_care"
-},
-{
-    "name":"Premium Beauty",
-    "categoryId":"women_premium_beauty",
-    "parentCategoryName":"Beauty & Personal Care",
-    "parentCategoryId":"women_beauty_and_personal_care"
-},
-{
-    "name":"Lipsticks",
-    "categoryId":"women_lipsticks",
-   "parentCategoryName":"Beauty & Personal Care",
-    "parentCategoryId":"women_beauty_and_personal_care"
-},
-{
-    "name":"Fragrances",
-    "categoryId":"women_fragrances",
-    "parentCategoryName":"Beauty & Personal Care",
-    "parentCategoryId":"women_beauty_and_personal_care"
-},
-{
-    "name":"Smart Wearables",
-    "categoryId":"women_smart_wearables",
-    "parentCategoryName":"Gadgets",
-    "parentCategoryId":"women_gadgets"
-},
-{
-    "name":"Fitness Gadgets",
-    "categoryId":"women_fitness_gadgets",
-   "parentCategoryName":"Gadgets",
-    "parentCategoryId":"women_gadgets"
-},
-{
-    "name":"Headphones",
-    "categoryId":"women_headphones",
-    "parentCategoryName":"Gadgets",
-    "parentCategoryId":"women_gadgets"
-},
-{
-    "name":"Speakers",
-    "categoryId":"women_speakers",
-    "parentCategoryName":"Gadgets",
-    "parentCategoryId":"women_gadgets"
-},
-{
-    "name":"Fashion Jewellery",
-    "categoryId":"women_fashion_jewellery",
-    "parentCategoryName":"Jewellery",
-    "parentCategoryId":"women_Jewellery"
-},
-{
-    "name":"Fine Jewellery",
-    "categoryId":"women_fine_jewellery",
-    "parentCategoryName":"Jewellery",
-    "parentCategoryId":"women_Jewellery"
-},
-{
-    "name":"Earrings",
-    "categoryId":"women_earrings",
-    "parentCategoryName":"Jewellery",
-    "parentCategoryId":"women_Jewellery"
-}
+    }, {
+        "name": "Flats",
+        "categoryId": "women_flats",
+        "parentCategoryName": "Footwear",
+        "parentCategoryId": "women_footwear"
+    },
+    {
+        "name": "Casual Shoes",
+        "categoryId": "women_casual_shoes",
+        "parentCategoryName": "Footwear",
+        "parentCategoryId": "women_footwear"
+    },
+    {
+        "name": "Heels",
+        "categoryId": "women_heels",
+        "parentCategoryName": "Footwear",
+        "parentCategoryId": "women_footwear"
+    },
+    {
+        "name": "Boots",
+        "categoryId": "women_boots",
+        "parentCategoryName": "Footwear",
+        "parentCategoryId": "women_footwear"
+    },
+    {
+        "name": "Sports Shoes & Floaters",
+        "categoryId": "women_sports_shoes_and_floaters",
+        "parentCategoryName": "Footwear",
+        "parentCategoryId": "women_footwear"
+    },
+    {
+        "name": "Clothing",
+        "categoryId": "women_sports_clothing",
+        "parentCategoryName": "Sports & Active Wear",
+        "parentCategoryId": "women_sports_and_active_wear"
+    },
+    {
+        "name": "Footwear",
+        "categoryId": "women_sports_footwear",
+        "parentCategoryName": "Sports & Active Wear",
+        "parentCategoryId": "women_sports_and_active_wear"
+    },
+    {
+        "name": "Sports Accessories",
+        "categoryId": "women_sports_accessories",
+        "parentCategoryName": "Sports & Active Wear",
+        "parentCategoryId": "women_sports_and_active_wear"
+    },
+    {
+        "name": "Sports Equipment",
+        "categoryId": "women_sports_equipment",
+        "parentCategoryName": "Sports & Active Wear",
+        "parentCategoryId": "women_sports_and_active_wear"
+    },
+    {
+        "name": "Makeup",
+        "categoryId": "women_makeup",
+        "parentCategoryName": "Beauty & Personal Care",
+        "parentCategoryId": "women_beauty_and_personal_care"
+    },
+    {
+        "name": "Skincare",
+        "categoryId": "women_skincare",
+        "parentCategoryName": "Beauty & Personal Care",
+        "parentCategoryId": "women_beauty_and_personal_care"
+    },
+    {
+        "name": "Premium Beauty",
+        "categoryId": "women_premium_beauty",
+        "parentCategoryName": "Beauty & Personal Care",
+        "parentCategoryId": "women_beauty_and_personal_care"
+    },
+    {
+        "name": "Lipsticks",
+        "categoryId": "women_lipsticks",
+        "parentCategoryName": "Beauty & Personal Care",
+        "parentCategoryId": "women_beauty_and_personal_care"
+    },
+    {
+        "name": "Fragrances",
+        "categoryId": "women_fragrances",
+        "parentCategoryName": "Beauty & Personal Care",
+        "parentCategoryId": "women_beauty_and_personal_care"
+    },
+    {
+        "name": "Smart Wearables",
+        "categoryId": "women_smart_wearables",
+        "parentCategoryName": "Gadgets",
+        "parentCategoryId": "women_gadgets"
+    },
+    {
+        "name": "Fitness Gadgets",
+        "categoryId": "women_fitness_gadgets",
+        "parentCategoryName": "Gadgets",
+        "parentCategoryId": "women_gadgets"
+    },
+    {
+        "name": "Headphones",
+        "categoryId": "women_headphones",
+        "parentCategoryName": "Gadgets",
+        "parentCategoryId": "women_gadgets"
+    },
+    {
+        "name": "Speakers",
+        "categoryId": "women_speakers",
+        "parentCategoryName": "Gadgets",
+        "parentCategoryId": "women_gadgets"
+    },
+    {
+        "name": "Fashion Jewellery",
+        "categoryId": "women_fashion_jewellery",
+        "parentCategoryName": "Jewellery",
+        "parentCategoryId": "women_Jewellery"
+    },
+    {
+        "name": "Fine Jewellery",
+        "categoryId": "women_fine_jewellery",
+        "parentCategoryName": "Jewellery",
+        "parentCategoryId": "women_Jewellery"
+    },
+    {
+        "name": "Earrings",
+        "categoryId": "women_earrings",
+        "parentCategoryName": "Jewellery",
+        "parentCategoryId": "women_Jewellery"
+    },
+    {
+        "name": "Handbags",
+        "categoryId": "women_handbags",
+        "parentCategoryName": "Backpacks",
+        "parentCategoryId": "women_backpacks"
+    },
+    {
+        "name": " Bags & Wallets",
+        "categoryId": "women_bags",
+        "parentCategoryName": "Backpacks",
+        "parentCategoryId": "women_backpacks"
+    },
+    {
+        "name": "Wallets",
+        "categoryId": "women_wallets",
+        "parentCategoryName": "Backpacks",
+        "parentCategoryId": "women_backpacks"
+    },
+    {
+        "name": "Luggages & Trolleys",
+        "categoryId": "women_luggages_and_trolleys",
+        "parentCategoryName": "Backpacks",
+        "parentCategoryId": "women_backpacks"
+    }
+
 ]
 
 

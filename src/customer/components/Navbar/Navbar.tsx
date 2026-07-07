@@ -43,84 +43,84 @@ const Navbar = () => {
             </h1>
           </div >
 
-         <ul className="flex items-center font-medium text-gray-800">
-  {categories.map((item:any) => (
-    <li
-      
-      onMouseLeave={() => {
-        setShowCategorySheet(false);
-      }}
-      onMouseEnter={() => {
-        setShowCategorySheet(true);
-        setSelectedCategory(item.categoryId);
-      }}
-      className="mainCategory hover:text-primary-color hover:border-b-2 h-[70px] px-4 border-primary-color flex items-center"
-    >
-      {item.name}
-    </li>
-  ))}
+          <ul className="flex items-center font-medium text-gray-800">
+            {categories.map((item: any) => (
+              <li
 
-  <li></li>
-</ul>
-        <div className="hidden md:flex items-center flex-1 max-w-[500px] h-[44px] bg-gray-100 border border-gray-300 rounded-lg overflow-hidden mx-6">
-          <SearchIcon className="mx-3 text-gray-500" />
+                onMouseLeave={() => {
+                  setShowCategorySheet(false);
+                }}
+                onMouseEnter={() => {
+                  setShowCategorySheet(true);
+                  setSelectedCategory(item.categoryId);
+                }}
+                className="mainCategory hover:text-primary-color hover:border-b-2 h-[70px] px-4 border-primary-color flex items-center"
+              >
+                {item.name}
+              </li>
+            ))}
 
-          <input
-            type="text"
-            placeholder="Search Products, Brands and More..."
-            className="flex-1 h-full bg-transparent outline-none text-sm text-gray-700 placeholder:text-gray-500 pr-3"
-          />
-        </div>
-        {/* Right Side */}
-        <div className="flex gap-1 lg:gap-6 items-center">
+            <li></li>
+          </ul>
+          <div className="hidden md:flex items-center flex-1 max-w-[500px] h-[44px] bg-gray-100 border border-gray-300 rounded-lg overflow-hidden mx-6">
+            <SearchIcon className="mx-3 text-gray-500" />
 
-
-          {false ? (
-            <Button className="flex items-center gap-2">
-              <Avatar
-                sx={{ width: 29, height: 29 }}
-                src=""
-              />
-
-              <h1 className="font-semibold hidden lg:block">
-                Login
-              </h1>
-            </Button>
-          ) : (
-            <Button variant="contained">
-              Login
-            </Button>
-          )}
-
-          <IconButton>
-            <FavoriteBorder sx={{ fontSize: 20 }} />
-          </IconButton>
-
-          <IconButton>
-            <AddShoppingCart
-              className="text-gray-700"
-              sx={{ fontSize: 20 }}
+            <input
+              type="text"
+              placeholder="Search Products, Brands and More..."
+              className="flex-1 h-full bg-transparent outline-none text-sm text-gray-700 placeholder:text-gray-500 pr-3"
             />
-          </IconButton>
+          </div>
+          {/* Right Side */}
+          <div className="flex gap-1 lg:gap-6 items-center">
 
-          {isLarge && (
-            <Button
-              startIcon={<Storefront />}
-              variant="outlined"
-            >
-              Seller
-            </Button>
-          )}
 
+            {false ? (
+              <Button className="flex items-center gap-2">
+                <Avatar
+                  sx={{ width: 29, height: 29 }}
+                  src=""
+                />
+
+                <h1 className="font-semibold hidden lg:block">
+                  Login
+                </h1>
+              </Button>
+            ) : (
+              <Button variant="contained">
+                Login
+              </Button>
+            )}
+
+            <IconButton>
+              <FavoriteBorder sx={{ fontSize: 20 }} />
+            </IconButton>
+
+            <IconButton>
+              <AddShoppingCart
+                className="text-gray-700"
+                sx={{ fontSize: 20 }}
+              />
+            </IconButton>
+
+            {isLarge && (
+              <Button
+                startIcon={<Storefront />}
+                variant="outlined"
+              >
+                Seller
+              </Button>
+            )}
+
+          </div>
         </div>
-      </div>
-      {showCategorySheet &&<div 
-      onMouseLeave={()=>setShowCategorySheet(false)}
-      onMouseEnter={()=>setShowCategorySheet(true)}
-       className='categorySheet absolute top-[4.41rem] left-20 right-20'>
-        <CategorySheet selectedCategory={selectedCategory} />
-      </div>}
-    </Box >
+        {showCategorySheet && <div
+          onMouseLeave={() => setShowCategorySheet(false)}
+          onMouseEnter={() => setShowCategorySheet(true)}
+          className='categorySheet absolute top-[4.41rem] left-20 right-20'>
+          <CategorySheet selectedCategory={selectedCategory} />
+        </div>}
+      </Box >
     </>
   );
 };

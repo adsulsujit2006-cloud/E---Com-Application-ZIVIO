@@ -1,26 +1,26 @@
 import React from "react";
-// @ts-ignore: Allow side-effect import of CSS without type declarations
 import "./App.css";
 
 import { ThemeProvider } from "@mui/material";
-
+import { BrowserRouter } from "react-router-dom";
 
 import customeTheme from "./Theme/customeTheme";
-import { Home } from "@mui/icons-material";
-import HomeCategory from "./customer/pages/Home/HomeCategory";
 import Navbar from "./customer/components/Navbar/Navbar";
-
-
+import Product from "./customer/pages/Product/Product";
+import HomeCategory from "./customer/pages/Home/HomeCategory";
+// import HomeCategory from "./customer/pages/Home/HomeCategory";
 
 function App() {
   return (
-    <ThemeProvider theme={customeTheme}>
-      <>
-        <Navbar />
-         <HomeCategory/>
+   
+      <ThemeProvider theme={customeTheme}>
+        <>
+          <Navbar />
+         {/* <HomeCategory />*/} 
+          <Product />
         </>
-     
-    </ThemeProvider>
+      </ThemeProvider>
+   
   );
 }
 
