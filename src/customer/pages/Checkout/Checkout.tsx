@@ -143,7 +143,7 @@ const Checkout = () => {
                       fontSize: "16px",
                     }}
                   >
-                    Checkout
+                    Place Order
                   </Button>
                 </div>
 
