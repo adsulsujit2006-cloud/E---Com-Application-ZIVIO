@@ -95,8 +95,8 @@ const OrderDetail = () => {
                 </div>
                 <div className="p-10">
                     <Button 
-                    disabled={true}
-                    color="error" sx={{py:"0.7rem"}} className="" variant="contained"fullWidth>
+                    disabled={false}
+                    color="error" sx={{py:"0.7rem"}} className="" variant="outlined"fullWidth>
                         {true?"order canceled":"cancle Order"}
                     </Button>
 

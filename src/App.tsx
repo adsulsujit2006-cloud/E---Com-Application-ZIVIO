@@ -13,6 +13,7 @@ import Review from "./customer/pages/Review/Review";
 import Cart from "./customer/pages/Cart/Cart";
 import Checkout from "./customer/pages/Checkout/Checkout";
 import Account from "./customer/pages/Account/Account";
+import UserDetails from "./customer/pages/Account/UserDetails";
 
 // import HomeCategory from "./customer/pages/Home/HomeCategory";
 
@@ -28,7 +29,9 @@ function App() {
           {/*<Review/>*/}
           {/*<Cart/>*/}
          { /*<Checkout/>*/}
-         <Account/>
+         {<Account/>}
+         {/*UserDetails*/}
+         
         </>
       </ThemeProvider>
    
