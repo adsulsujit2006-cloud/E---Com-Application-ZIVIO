@@ -12,6 +12,7 @@ import { BeautyLevelTwo } from "../../../data/category/LevelTwo/BeautyLevelTwo";
 import { BeautyLevelThree } from "../../../data/category/LevelThree/BeautyLevelThree";
 import { KidsLevlTwo } from "../../../data/category/LevelTwo/KidsLevelTwo";
 import { KidsLevelThree } from "../../../data/category/LevelThree/KidsLevelThree";
+import { useNavigate } from "react-router-dom";
 
 const categoryTwo: { [key: string]: any[] } = {
     men: menLevlTwo,
@@ -19,7 +20,7 @@ const categoryTwo: { [key: string]: any[] } = {
     electronics : ElectronicsLevelTwo,
     beauty:BeautyLevelTwo,
     kids:KidsLevlTwo
-    
+
 };
 
 const categoryThree: { [key: string]: any[] } = {
@@ -37,6 +38,7 @@ const CategorySheet = ({ selectedCategory, setShowSheet }: any) => {
             (child: any) => child.parentCategoryId === parentCategoryId
         );
     };
+    const navigate = useNavigate()
 
     return (
         <Box
@@ -63,7 +65,12 @@ const CategorySheet = ({ selectedCategory, setShowSheet }: any) => {
                                 <div key={item.categoryId}>
                                     <li
                                         className="hover:text-primary-color cursor-pointer"
-                                        onClick={() => setShowSheet(false)}
+                                        onClick={() => {
+                                            navigate("/products/" + item.categoryId);
+                                            if (typeof setShowSheet === "function") {
+                                                setShowSheet(false);
+                                            }
+                                        }}
                                     >
                                         {item.name}
                                     </li>

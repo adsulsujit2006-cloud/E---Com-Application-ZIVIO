@@ -1,17 +1,29 @@
 import React, { useEffect, useState } from "react";
-import "./ProductCard.css"
+import "./ProductCard.css";
 import { Button } from "@mui/material";
 import { Favorite, ModeComment } from "@mui/icons-material";
 import { teal } from "@mui/material/colors";
-const images = [
-  "productSphoto/sareephoto3.jpg",
-  "productSphoto/sarreephot4.jpg",
-  "productSphoto/sareephoto2.jpg",
-  "productSphoto/sareephoto3.jpg",
-  "productSphoto/sarreephot4.jpg",
 
+const images = [
+  "/productSphoto/sareephoto3.jpg",
+  "/productSphoto/sarreephot4.jpg",
+  "/productSphoto/sareephoto2.jpg",
+  "/productSphoto/sareephoto3.jpg",
+  "/productSphoto/sarreephot4.jpg",
 ];
-const ProductCard = () => {
+
+interface ProductCardProps {
+  product?: {
+    productId?: string;
+    brand?: string;
+    name?: string;
+    price?: number;
+    mrp?: number;
+    discount?: number;
+  };
+}
+
+const ProductCard = ({ product }: ProductCardProps) => {
   const [currentImage, setCurrentImage] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -20,7 +32,9 @@ const ProductCard = () => {
 
     if (isHovered) {
       interval = setInterval(() => {
-        setCurrentImage((prevImage) => (prevImage + 1) % images.length);
+        setCurrentImage(
+          (prevImage) => (prevImage + 1) % images.length
+        );
       }, 1000);
     }
 
@@ -37,7 +51,7 @@ const ProductCard = () => {
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => {
             setIsHovered(false);
-            setCurrentImage(0); // Reset to first image
+            setCurrentImage(0);
           }}
         >
           {images.map((item, index) => (
@@ -51,37 +65,39 @@ const ProductCard = () => {
               }}
             />
           ))}
-          {isHovered &&<div className="indicator flex flex-col items-center space-y-2">
-            <div className="flex gap-3">
-              <Button variant="contained" color="secondary">
 
-                <Favorite sx={{color:teal[500]}}/>
+          {isHovered && (
+            <div className="indicator flex flex-col items-center space-y-2">
+              <div className="flex gap-3">
+                <Button variant="contained" color="secondary">
+                  <Favorite sx={{ color: teal[500] }} />
+                </Button>
 
-              </Button>
-
-              <Button variant="contained" color="secondary">
-
-                <ModeComment sx={{color:teal[500]}}/>
-
-              </Button>
+                <Button variant="contained" color="secondary">
+                  <ModeComment sx={{ color: teal[500] }} />
+                </Button>
+              </div>
             </div>
-          </div>
-          }
+          )}
         </div>
+
         <div className="details pt-3 space-y-1 group-hover-effect rounded-md">
           <div className="name">
-            <h1>SZN</h1>
-            <p>Pink Saree</p>
+            <h1>{product?.brand ?? "SZN"}</h1>
+            <p>{product?.name ?? "Pink Saree"}</p>
           </div>
+
           <div className="price flex items-center gap-3">
             <span className="font-sans text-gray-800">
-             ₹ 1000
+              ₹ {product?.price ?? 1000}
             </span>
+
             <span className="thin-line-through text-gray-400">
-              ₹ 1499
+              ₹ {product?.mrp ?? 1499}
             </span>
+
             <span className="text-primary-color font-semibold">
-             (30% OFF)
+              ({product?.discount ?? 30}% OFF)
             </span>
           </div>
         </div>
@@ -89,9 +105,5 @@ const ProductCard = () => {
     </>
   );
 };
-
-
-
-
 
 export default ProductCard;

@@ -17,6 +17,7 @@ import {
 } from "@mui/icons-material";
 import CategorySheet from "./CategorySheet";
 import { mainCategory } from "../../../data/category/mainCategory";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
 
@@ -24,6 +25,7 @@ const Navbar = () => {
   const isLarge = useMediaQuery(theme.breakpoints.up("lg"));
   const [selectedCategory, setSelectedCategory] = useState("men");
   const [showCategorySheet, setShowCategorySheet] = useState(false);
+  const navigate = useNavigate()
 
   const categories = Array.isArray(mainCategory) ? mainCategory : [mainCategory];
 
@@ -38,7 +40,7 @@ const Navbar = () => {
               <MenuIcon />
             </IconButton>
             }
-            <h1 className="logo cursor-pointer text-lg md:text-3xl text-[#2F414A]">
+            <h1 onClick={()=>navigate("/")} className="logo cursor-pointer text-lg md:text-3xl text-[#2F414A]">
               ZIVIO
             </h1>
           </div >
@@ -75,8 +77,9 @@ const Navbar = () => {
           <div className="flex gap-1 lg:gap-6 items-center">
 
 
-            {false ? (
-              <Button className="flex items-center gap-2">
+            {true ? (
+              <Button onClick={()=>navigate("/account/Order")}
+              className="flex items-center gap-2">
                 <Avatar
                   sx={{ width: 29, height: 29 }}
                   src=""
@@ -96,7 +99,7 @@ const Navbar = () => {
               <FavoriteBorder sx={{ fontSize: 20 }} />
             </IconButton>
 
-            <IconButton>
+            <IconButton onClick={()=>navigate("/")}>
               <AddShoppingCart
                 className="text-gray-700"
                 sx={{ fontSize: 20 }}
