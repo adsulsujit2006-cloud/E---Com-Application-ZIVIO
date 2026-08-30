@@ -14,6 +14,7 @@ import Cart from "./customer/pages/Cart/Cart";
 import Checkout from "./customer/pages/Checkout/Checkout";
 import Account from "./customer/pages/Account/Account";
 import UserDetails from "./customer/pages/Account/UserDetails";
+import BecomeSeller from "./Become Seller/BecomeSeller";
 
 function App() {
   return (
@@ -51,6 +52,11 @@ function App() {
            <Route
             path="/account/*"
             element={<Account />}
+          />
+
+          <Route
+            path="/become-seller/*"
+            element={<BecomeSeller />}
           />
         </Routes>
       </>
