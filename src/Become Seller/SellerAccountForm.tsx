@@ -1,6 +1,8 @@
 
 import { Button, Step, StepLabel, Stepper } from "@mui/material";
 import React, { useState } from "react";
+import BecomeSellerFormStep1 from "./BecomeSellerFormStep1";
+import { useFormik } from "formik";
 
 
 const steps = [
@@ -17,7 +19,7 @@ const SellerAccountForm = () => {
 
         // Next step
         if (value === 1) {
-            if (activeStep < steps.length ) {
+            if (activeStep < steps.length) {
                 setActiveStep(activeStep + value);
             } else {
                 handleCreateAccount();
@@ -37,6 +39,44 @@ const SellerAccountForm = () => {
     const handleCreateAccount = () => {
         console.log("create account");
     };
+    const formik = useFormik({
+        initialValues: {
+            mobile: "",
+            otp: "",
+            gstin: "",
+
+            pickupAddress: {
+                name: "",
+                mobile: "",
+                pincode: "",
+                address: "",
+                locality: "",
+                city: "",
+                state: "",
+            },
+
+            bankDetails: {
+                accountNumber: "",
+                ifscCode: "",
+                accountHolderName: "",
+            },
+            sellerName: "",
+            email: "",
+            businessDetails: {
+                businessName: "",
+                businessEmail: "",
+                businessMobile: "",
+                logo: "",
+                banner: "",
+                businessAddress: ""
+            },
+            password: ""
+        },
+
+        onSubmit: (values) => {
+            console.log(values);
+        },
+    });
 
     return (
         <div>
@@ -50,31 +90,34 @@ const SellerAccountForm = () => {
                 ))}
             </Stepper>
 
-            <section>
+            <section className="mt-20 space-y-10">
+                <div>
+                    {activeStep == 0 ? <BecomeSellerFormStep1 formik={formik} /> : ""}
+                </div>
+                <div className="flex items-center justify-between ">
 
+                    <Button
+                        onClick={handleStep(-1)}
+                        variant="contained"
+                        disabled={activeStep == 0}
+                    >
+                        Back
+                    </Button>
+
+                    <Button
+                        onClick={handleStep(1)}
+                        variant="contained"
+                    >
+                        {activeStep == (steps.length - 1)
+                            ? "Create Account"
+                            : "Continue"}
+                    </Button>
+
+                </div>
 
             </section>
 
-            <div className="flex items-center justify-between">
 
-                <Button
-                    onClick={handleStep(-1)}
-                    variant="contained"
-                    disabled={activeStep == 0}
-                >
-                    Back
-                </Button>
-
-                <Button
-                    onClick={handleStep(1)}
-                    variant="contained"
-                >
-                    {activeStep == (steps.length - 1)
-                        ? "Create Account"
-                        : "Continue"}
-                </Button>
-
-            </div>
 
             {/* Your existing Seller form code */}
 
