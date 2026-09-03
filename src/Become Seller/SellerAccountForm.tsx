@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import BecomeSellerFormStep1 from "./BecomeSellerFormStep1";
 import { useFormik } from "formik";
 import BecomeSellerFormStep2 from "./BecomeSellerFromStep2";
+import BecomeSellerFromStep3 from "./BecomeSellerFromStep3";
+import BecomeSellerFromStep4 from "./BecomeSellerFromStep4";
 
 
 const steps = [
@@ -93,8 +95,11 @@ const SellerAccountForm = () => {
 
             <section className="mt-20 space-y-10">
                 <div>
-                    {activeStep == 0 ? <BecomeSellerFormStep1 formik={formik} /> : 
-                    activeStep == 1 ? <BecomeSellerFormStep2 formik={formik} /> : ""}
+                    {activeStep === 0 ? <BecomeSellerFormStep1 formik={formik} /> : 
+                    activeStep === 1 ? <BecomeSellerFormStep2 formik={formik} /> : 
+                    activeStep === 2 ? <BecomeSellerFromStep3 formik={formik}/> :
+                    activeStep === 3 ? <BecomeSellerFromStep4 formik={formik}/> : ""
+            }
                 </div>
                 <div className="flex items-center justify-between ">
 
