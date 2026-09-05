@@ -2,6 +2,7 @@
 import React from "react";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import { AccountBalanceWallet, AccountBox, Add, Dashboard, Inventory, Logout, Receipt, ShoppingBag } from "@mui/icons-material";
+import DrawerList from "../../../component/DrawerList";
  const menu = [
         {
             name: "Dashboard",
@@ -57,13 +58,13 @@ const menu2 = [
         activeIcon : <Logout className="text-white"/>
     }
 ];
-const SellerDrawerList = () => {
+const SellerDrawerList = ({toggleDrawer}: {toggleDrawer: any}) => {
 
    
 
     return (
         <div>
-           
+          <DrawerList menu={menu} menu2={menu2} toggleDrawer={toggleDrawer} /> 
         </div>
     );
 };
