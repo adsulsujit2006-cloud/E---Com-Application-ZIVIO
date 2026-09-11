@@ -7,6 +7,7 @@ import AddProduct from "../seller/pages/Product/AddProduct";
 import Orders from "../seller/pages/Orders/Orders";
 import Profile from "../seller/pages/Account/Profile";
 import Payment from "../seller/pages/Payment/Payment";
+import Transaction from "../seller/pages/Transaction/Transaction";
 
 const SellerRoutes = () =>{
     return(
@@ -18,6 +19,7 @@ const SellerRoutes = () =>{
 <Route path="/orders" element={<Orders/>} />
 <Route path="/profile" element={<Profile/>} />
 <Route path="/payment" element={<Payment/>} />
+<Route path="/transaction" element={<Transaction/>} />
 </Routes>
         </div>
     )
