@@ -25,7 +25,7 @@ import DrawerList from "../../../component/DrawerList";
         },
         {
             name : "Add Product",
-            path : "seller/add-product",
+            path : "/seller/add-product",
             icon:<Add className="text-gray-700"/>,
             activeIcon:<Add className="text-white" />
 
