@@ -16,6 +16,7 @@ import Account from "./customer/pages/Account/Account";
 import UserDetails from "./customer/pages/Account/UserDetails";
 import BecomeSeller from "./Become Seller/BecomeSeller";
 import SellerDashbord from "./seller/pages/SellerDashbord/SellerDashbord";
+import AdminDashbord from "./admin/Pages/Dashboard/Dashboard";
 
 function App() {
   return (
@@ -26,43 +27,28 @@ function App() {
         <Routes>
           <Route path="/" element={<HomeCategory />} />
 
-          <Route
-            path="/products/:categoryId"
-            element={<Product />}
-          />
+          <Route path="/products/:categoryId" element={<Product />} />
 
-          <Route
-            path="/reviews/:productId"
-            element={<Review />}
-          />
+          <Route path="/reviews/:productId" element={<Review />} />
 
           <Route
             path="/product-details/:categoryId/:name/:productId"
             element={<ProductDetails />}
           />
 
-          <Route
-            path="/cart"
-            element={<Cart />}
-          />
+          <Route path="/cart" element={<Cart />} />
 
-          <Route
-            path="/checkout"
-            element={<Checkout />}
-          />
-           <Route
-            path="/account/*"
-            element={<Account />}
-          />
+          <Route path="/checkout" element={<Checkout />} />
 
-          <Route
-            path="/become-seller/*"
-            element={<BecomeSeller />}
-          />
-           <Route
-            path="/seller/*"
-            element={<SellerDashbord />}
-          />
+          <Route path="/account/*" element={<Account />} />
+
+          <Route path="/become-seller/*" element={<BecomeSeller />} />
+
+          <Route path="/seller/*" element={<SellerDashbord />} />
+
+          {/* fixed: was "/admin", must be "/admin/*" so nested <Routes> inside
+              AdminDashbord -> AdminRoute can match sub-paths like /admin/coupon */}
+          <Route path="/admin/*" element={<AdminDashbord />} />
         </Routes>
       </>
     </ThemeProvider>
