@@ -6,69 +6,147 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { Box, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import React, { useState } from 'react';
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+type OrderStatus = 'Pending' | 'Shipped' | 'Delivered' | 'Cancelled';
+
+interface Order {
+  orderId: string;
+  product: string;
+  address: string;
+  status: OrderStatus;
+}
+
+const statusStyles: Record<OrderStatus, { bg: string; text: string }> = {
+  Pending: { bg: '#FEF3D6', text: '#B7791F' },
+  Shipped: { bg: '#DCEAF7', text: '#2563A6' },
+  Delivered: { bg: '#DFF3E6', text: '#1F7A4D' },
+  Cancelled: { bg: '#FBE1DE', text: '#C4433A' },
+};
+
+const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    backgroundColor: '#1F2420',
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: 600,
+    letterSpacing: '0.01em',
+    borderBottom: 'none',
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
+    color: '#1B1F1C',
+    borderBottom: '1px solid #E3E6E1',
   },
 }));
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
+const StyledTableRow = styled(TableRow)(() => ({
   '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
+    backgroundColor: '#F9FAF8',
   },
-  // hide last border
   '&:last-child td, &:last-child th': {
     border: 0,
   },
 }));
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-) {
-  return { name, calories, fat, carbs, protein };
+function createOrder(
+  orderId: string,
+  product: string,
+  address: string,
+  status: OrderStatus,
+): Order {
+  return { orderId, product, address, status };
 }
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
+const initialOrders: Order[] = [
+  createOrder('ORD-10231', 'Frozen Yoghurt Maker', '221B Baker Street, London', 'Pending'),
+  createOrder('ORD-10232', 'Ice Cream Sandwich Set', '12 MG Road, Pune', 'Shipped'),
+  createOrder('ORD-10233', 'Eclair Gift Box', '45 Rue de Rivoli, Paris', 'Delivered'),
+  createOrder('ORD-10234', 'Cupcake Baking Kit', '9 Fifth Avenue, New York', 'Cancelled'),
+  createOrder('ORD-10235', 'Gingerbread House Kit', '3 Orchard Road, Singapore', 'Pending'),
 ];
 
-export default function OrderTable() {
+const StatusPill = ({ status }: { status: OrderStatus }) => {
+  const { bg, text } = statusStyles[status];
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
+    <Box
+      sx={{
+        display: 'inline-block',
+        px: '10px',
+        py: '3px',
+        borderRadius: '999px',
+        fontSize: '0.78rem',
+        fontWeight: 600,
+        backgroundColor: bg,
+        color: text,
+      }}
+    >
+      {status}
+    </Box>
+  );
+};
+
+export default function OrderTable() {
+  const [orders, setOrders] = useState<Order[]>(initialOrders);
+
+  const handleStatusChange = (orderId: string, event: SelectChangeEvent) => {
+    const newStatus = event.target.value as OrderStatus;
+    setOrders((prev) =>
+      prev.map((order) =>
+        order.orderId === orderId ? { ...order, status: newStatus } : order
+      )
+    );
+  };
+
+  return (
+    <TableContainer
+      component={Paper}
+      sx={{
+        border: '1px solid #E3E6E1',
+        borderRadius: '12px',
+        boxShadow: 'none',
+      }}
+    >
+      <Table sx={{ minWidth: 700 }} aria-label="orders table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>Order Id</StyledTableCell>
-                        <StyledTableCell>Product</StyledTableCell>
-            <StyledTableCell align="right">Shopping Address</StyledTableCell>
-            <StyledTableCell align="right">Order Status</StyledTableCell>
-            <StyledTableCell align="right">Update</StyledTableCell>
-            
+            <StyledTableCell>Order ID</StyledTableCell>
+            <StyledTableCell>Product</StyledTableCell>
+            <StyledTableCell>Shipping address</StyledTableCell>
+            <StyledTableCell>Order status</StyledTableCell>
+            <StyledTableCell>Update</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <StyledTableRow key={row.name}>
+          {orders.map((order) => (
+            <StyledTableRow key={order.orderId}>
               <StyledTableCell component="th" scope="row">
-                {row.name}
+                {order.orderId}
               </StyledTableCell>
-              <StyledTableCell >{row.calories}</StyledTableCell>
-              <StyledTableCell align="right">{row.fat}</StyledTableCell>
-              <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-              <StyledTableCell align="right">{row.protein}</StyledTableCell>
+              <StyledTableCell>{order.product}</StyledTableCell>
+              <StyledTableCell>{order.address}</StyledTableCell>
+              <StyledTableCell>
+                <StatusPill status={order.status} />
+              </StyledTableCell>
+              <StyledTableCell>
+                <Select
+                  size="small"
+                  value={order.status}
+                  onChange={(event) => handleStatusChange(order.orderId, event)}
+                  sx={{
+                    fontSize: '0.82rem',
+                    borderRadius: '6px',
+                    minWidth: '130px',
+                    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E3E6E1' },
+                  }}
+                >
+                  <MenuItem value="Pending">Pending</MenuItem>
+                  <MenuItem value="Shipped">Shipped</MenuItem>
+                  <MenuItem value="Delivered">Delivered</MenuItem>
+                  <MenuItem value="Cancelled">Cancelled</MenuItem>
+                </Select>
+              </StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>

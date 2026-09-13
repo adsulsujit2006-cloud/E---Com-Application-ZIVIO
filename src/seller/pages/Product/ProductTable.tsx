@@ -6,74 +6,175 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { Box, IconButton, TextField } from '@mui/material';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import React, { useState } from 'react';
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+interface Product {
+  id: string;
+  image: string;
+  title: string;
+  mrp: number;
+  sellingPrice: number;
+  colorName: string;
+  colorHex: string;
+  stock: number;
+}
+
+const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
+    backgroundColor: '#1F2420',
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: 600,
+    letterSpacing: '0.01em',
+    borderBottom: 'none',
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
+    color: '#1B1F1C',
+    borderBottom: '1px solid #E3E6E1',
   },
 }));
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
+const StyledTableRow = styled(TableRow)(() => ({
   '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
+    backgroundColor: '#F9FAF8',
   },
-  // hide last border
   '&:last-child td, &:last-child th': {
     border: 0,
   },
 }));
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-) {
-  return { name, calories, fat, carbs, protein };
+function createProduct(
+  id: string,
+  image: string,
+  title: string,
+  mrp: number,
+  sellingPrice: number,
+  colorName: string,
+  colorHex: string,
+  stock: number,
+): Product {
+  return { id, image, title, mrp, sellingPrice, colorName, colorHex, stock };
 }
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
+const initialProducts: Product[] = [
+  createProduct('P-1001', 'https://via.placeholder.com/56?text=Yog', 'Frozen Yoghurt Maker', 1999, 1599, 'White', '#FFFFFF', 24),
+  createProduct('P-1002', 'https://via.placeholder.com/56?text=Ice', 'Ice Cream Sandwich Set', 1299, 999, 'Pink', '#FFC0CB', 12),
+  createProduct('P-1003', 'https://via.placeholder.com/56?text=Ecl', 'Eclair Gift Box', 899, 749, 'Brown', '#A52A2A', 8),
+  createProduct('P-1004', 'https://via.placeholder.com/56?text=Cup', 'Cupcake Baking Kit', 1499, 1199, 'Gold', '#FFD700', 30),
+  createProduct('P-1005', 'https://via.placeholder.com/56?text=Gin', 'Gingerbread House Kit', 2499, 1999, 'Red', '#FF0000', 5),
 ];
 
 export default function ProductTable() {
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+
+  const handleStockChange = (id: string, value: string) => {
+    const nextStock = Math.max(0, Number(value) || 0);
+    setProducts((prev) =>
+      prev.map((product) =>
+        product.id === id ? { ...product, stock: nextStock } : product
+      )
+    );
+  };
+
+  const handleEdit = (id: string) => {
+    console.log('Edit product:', id);
+  };
+
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
+    <TableContainer
+      component={Paper}
+      sx={{
+        border: '1px solid #E3E6E1',
+        borderRadius: '12px',
+        boxShadow: 'none',
+      }}
+    >
+      <Table sx={{ minWidth: 760 }} aria-label="products table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>Images</StyledTableCell>
-                        <StyledTableCell>Title</StyledTableCell>
+            <StyledTableCell>Image</StyledTableCell>
+            <StyledTableCell>Title</StyledTableCell>
             <StyledTableCell align="right">MRP</StyledTableCell>
-            <StyledTableCell align="right">Selling Price</StyledTableCell>
-            <StyledTableCell align="right">Color</StyledTableCell>
-                        <StyledTableCell align="right">Update Stock</StyledTableCell>
-                                    <StyledTableCell align="right">Update</StyledTableCell>
-            
+            <StyledTableCell align="right">Selling price</StyledTableCell>
+            <StyledTableCell>Color</StyledTableCell>
+            <StyledTableCell align="center">Stock</StyledTableCell>
+            <StyledTableCell align="center">Edit</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <StyledTableRow key={row.name}>
+          {products.map((product) => (
+            <StyledTableRow key={product.id}>
               <StyledTableCell component="th" scope="row">
-                {row.name}
+                <Box
+                  component="img"
+                  src={product.image}
+                  alt={product.title}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src =
+                      'https://via.placeholder.com/56?text=No+Image';
+                  }}
+                  sx={{
+                    width: '48px',
+                    height: '48px',
+                    objectFit: 'cover',
+                    borderRadius: '8px',
+                    border: '1px solid #E3E6E1',
+                    display: 'block',
+                  }}
+                />
               </StyledTableCell>
-              <StyledTableCell >{row.calories}</StyledTableCell>
-              <StyledTableCell align="right">{row.fat}</StyledTableCell>
-              <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-              <StyledTableCell align="right">{row.protein}</StyledTableCell>
-               <StyledTableCell align="right">{row.fat}</StyledTableCell>
-              <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-              
+              <StyledTableCell>{product.title}</StyledTableCell>
+              <StyledTableCell align="right">
+                <Box component="span" sx={{ color: '#5B645D', textDecoration: 'line-through' }}>
+                  ₹{product.mrp.toLocaleString('en-IN')}
+                </Box>
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                <Box component="span" sx={{ fontWeight: 600 }}>
+                  ₹{product.sellingPrice.toLocaleString('en-IN')}
+                </Box>
+              </StyledTableCell>
+              <StyledTableCell>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Box
+                    sx={{
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '50%',
+                      flexShrink: 0,
+                      background: product.colorHex,
+                      border: product.colorName === 'White' ? '1px solid #E3E6E1' : 'none',
+                    }}
+                  />
+                  {product.colorName}
+                </Box>
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <TextField
+                  size="small"
+                  type="number"
+                  value={product.stock}
+                  onChange={(e) => handleStockChange(product.id, e.target.value)}
+                  sx={{
+                    width: '80px',
+                    '& .MuiOutlinedInput-root': { borderRadius: '6px' },
+                    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#E3E6E1' },
+                    '& input': { textAlign: 'center', fontSize: '0.85rem', py: '6px' },
+                  }}
+                />
+              </StyledTableCell>
+              <StyledTableCell align="center">
+                <IconButton
+                  size="small"
+                  onClick={() => handleEdit(product.id)}
+                  sx={{ color: '#1F4B43' }}
+                >
+                  <EditOutlinedIcon fontSize="small" />
+                </IconButton>
+              </StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>
