@@ -1,21 +1,45 @@
 import React from "react";
 
-const DealCard = () =>{
-    return(
-        <div>
-          <div className='w-[13rem] cursor-pointer'>
-            <img className='border-x[7px] border-t-[7px] border-pink-600 w-full h-[12rem] object-cover object-top
-            '
-            src="DealPhoto/mwatch.jpg" alt=""/>
-            <div className='border-4 border-black bg-black text-white p-2 text-center'>
-                <p className='text-lg font-semibold'>Smart Watch</p>
-                <p className='text-2xl font-bold'>20% OFF</p>
-                <p className='text-balance text-lg'>shop now</p>
-            </div>
-            
-            
-            </div>  
-        </div>
-    )
+interface DealCardProps {
+    image: string;
+    title: string;
+    discountLabel: string;
+    onShopNow?: () => void;
 }
-export default DealCard
+
+const DealCard = ({
+    image = "/DealPhoto/mwatch.jpg",
+    title = "Smart Watch",
+    discountLabel = "20% OFF",
+    onShopNow,
+}: Partial<DealCardProps>) => {
+    return (
+        <div
+            className="group w-[13rem] cursor-pointer overflow-hidden rounded-lg border-[3px] border-pink-600 shadow-sm transition-shadow duration-300 hover:shadow-xl"
+            onClick={onShopNow}
+        >
+            <div className="relative h-[12rem] w-full overflow-hidden">
+                <img
+                    className="h-full w-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-110"
+                    src={image}
+                    alt={title}
+                />
+                <span className="absolute right-2 top-2 rounded-full bg-pink-600 px-3 py-1 text-xs font-bold text-white shadow">
+                    {discountLabel}
+                </span>
+            </div>
+
+            <div className="bg-black p-3 text-center text-white">
+                <p className="truncate text-lg font-semibold">{title}</p>
+                <p className="mt-1 text-2xl font-bold text-pink-500">
+                    {discountLabel}
+                </p>
+                <p className="mt-1 text-sm font-medium uppercase tracking-wide text-gray-300 transition-colors duration-300 group-hover:text-white">
+                    Shop now
+                </p>
+            </div>
+        </div>
+    );
+};
+
+export default DealCard;

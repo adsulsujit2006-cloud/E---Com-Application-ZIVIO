@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import {
+    Alert,
     Avatar,
     Box,
     Button,
     CircularProgress,
     Divider,
     IconButton,
+    Snackbar,
     TextField,
     Typography,
 } from "@mui/material";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import { useFormik } from "formik";
+import * as Yup from "yup";
 import { uploadToCloudinary } from "../../../Util/uploadToCoudinary";
 
 const palette = {
@@ -35,6 +38,50 @@ const fieldSx = {
     "& .MuiInputLabel-root.Mui-focused": { color: palette.accent },
 };
 
+interface ProfileFormValues {
+    avatar: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    businessName: string;
+    gstin: string;
+    address: string;
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+}
+
+const validationSchema = Yup.object({
+    fullName: Yup.string().trim().required("Full name is required"),
+    email: Yup.string().trim().email("Enter a valid email address").required("Email is required"),
+    phone: Yup.string()
+        .trim()
+        .matches(/^[0-9]{10}$/, "Enter a valid 10-digit phone number")
+        .required("Phone number is required"),
+    businessName: Yup.string().trim(),
+    gstin: Yup.string()
+        .trim()
+        .matches(/^[0-9A-Z]{15}$/, "GSTIN must be 15 characters (numbers and capital letters)")
+        .notRequired(),
+    address: Yup.string().trim(),
+    currentPassword: Yup.string().when("newPassword", {
+        is: (val: string) => Boolean(val),
+        then: (schema) => schema.required("Enter your current password to set a new one"),
+        otherwise: (schema) => schema.notRequired(),
+    }),
+    newPassword: Yup.string()
+        .test("min-length", "Password must be at least 8 characters", (val) => !val || val.length >= 8)
+        .notRequired(),
+    confirmPassword: Yup.string().when("newPassword", {
+        is: (val: string) => Boolean(val),
+        then: (schema) =>
+            schema
+                .oneOf([Yup.ref("newPassword")], "Passwords do not match")
+                .required("Confirm your new password"),
+        otherwise: (schema) => schema.notRequired(),
+    }),
+});
+
 const SectionLabel = ({ title, hint }: { title: string; hint?: string }) => (
     <Box sx={{ mb: 2 }}>
         <Typography sx={{ fontWeight: 600, fontSize: "0.95rem", color: palette.text }}>
@@ -52,8 +99,13 @@ const Profile = () => {
     const [uploadingAvatar, setUploadingAvatar] = useState(false);
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
+    const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: "success" | "error" }>({
+        open: false,
+        message: "",
+        severity: "success",
+    });
 
-    const formik = useFormik({
+    const formik = useFormik<ProfileFormValues>({
         initialValues: {
             avatar: "",
             fullName: "",
@@ -66,11 +118,29 @@ const Profile = () => {
             newPassword: "",
             confirmPassword: "",
         },
-
-        onSubmit: async (values) => {
+        validationSchema,
+        onSubmit: async (values, { resetForm, setFieldValue }) => {
             setSaving(true);
             try {
                 console.log(values);
+                // Replace with your actual API call, e.g.:
+                // await api.put("/profile", values);
+
+                setSnackbar({ open: true, message: "Changes saved successfully.", severity: "success" });
+
+                // Clear password fields after a successful save; keep everything else.
+                resetForm({
+                    values: {
+                        ...values,
+                        currentPassword: "",
+                        newPassword: "",
+                        confirmPassword: "",
+                    },
+                });
+                setFieldValue("avatar", values.avatar);
+            } catch (error) {
+                console.error("Profile save failed:", error);
+                setSnackbar({ open: true, message: "Couldn't save changes. Please try again.", severity: "error" });
             } finally {
                 setSaving(false);
             }
@@ -123,11 +193,11 @@ const Profile = () => {
                     </Typography>
                 </Box>
 
-                <form onSubmit={formik.handleSubmit}>
+                <form onSubmit={formik.handleSubmit} noValidate>
                     <Box sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
 
                         {/* ---- Photo + identity ---- */}
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
+                        <Box sx={{ display: "flex", alignItems: "center", gap: 3, flexWrap: "wrap" }}>
                             <Box sx={{ position: "relative" }}>
                                 <Avatar
                                     src={formik.values.avatar || undefined}
@@ -136,6 +206,8 @@ const Profile = () => {
                                         height: 88,
                                         backgroundColor: palette.accent,
                                         fontSize: "1.8rem",
+                                        border: `3px solid ${palette.pageBg}`,
+                                        boxShadow: `0 0 0 1px ${palette.border}`,
                                     }}
                                 >
                                     {formik.values.fullName ? formik.values.fullName[0].toUpperCase() : "S"}
@@ -203,6 +275,9 @@ const Profile = () => {
                                     label="Full name"
                                     value={formik.values.fullName}
                                     onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.fullName && Boolean(formik.errors.fullName)}
+                                    helperText={formik.touched.fullName && formik.errors.fullName}
                                 />
                                 <TextField
                                     fullWidth
@@ -212,6 +287,9 @@ const Profile = () => {
                                     label="Phone number"
                                     value={formik.values.phone}
                                     onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.phone && Boolean(formik.errors.phone)}
+                                    helperText={formik.touched.phone && formik.errors.phone}
                                 />
                                 <TextField
                                     fullWidth
@@ -222,6 +300,9 @@ const Profile = () => {
                                     type="email"
                                     value={formik.values.email}
                                     onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.email && Boolean(formik.errors.email)}
+                                    helperText={formik.touched.email && formik.errors.email}
                                 />
                             </Box>
                         </Box>
@@ -240,6 +321,9 @@ const Profile = () => {
                                     label="Business name"
                                     value={formik.values.businessName}
                                     onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.businessName && Boolean(formik.errors.businessName)}
+                                    helperText={formik.touched.businessName && formik.errors.businessName}
                                 />
                                 <TextField
                                     fullWidth
@@ -248,7 +332,10 @@ const Profile = () => {
                                     name="gstin"
                                     label="GSTIN"
                                     value={formik.values.gstin}
-                                    onChange={formik.handleChange}
+                                    onChange={(e) => formik.setFieldValue("gstin", e.target.value.toUpperCase())}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.gstin && Boolean(formik.errors.gstin)}
+                                    helperText={formik.touched.gstin && formik.errors.gstin}
                                 />
                                 <TextField
                                     fullWidth
@@ -260,6 +347,9 @@ const Profile = () => {
                                     label="Business address"
                                     value={formik.values.address}
                                     onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.address && Boolean(formik.errors.address)}
+                                    helperText={formik.touched.address && formik.errors.address}
                                 />
                             </Box>
                         </Box>
@@ -279,6 +369,9 @@ const Profile = () => {
                                     type="password"
                                     value={formik.values.currentPassword}
                                     onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.currentPassword && Boolean(formik.errors.currentPassword)}
+                                    helperText={formik.touched.currentPassword && formik.errors.currentPassword}
                                 />
                                 <TextField
                                     fullWidth
@@ -289,6 +382,9 @@ const Profile = () => {
                                     type="password"
                                     value={formik.values.newPassword}
                                     onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.newPassword && Boolean(formik.errors.newPassword)}
+                                    helperText={formik.touched.newPassword && formik.errors.newPassword}
                                 />
                                 <TextField
                                     fullWidth
@@ -299,6 +395,9 @@ const Profile = () => {
                                     type="password"
                                     value={formik.values.confirmPassword}
                                     onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
+                                    helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
                                 />
                             </Box>
                         </Box>
@@ -330,6 +429,21 @@ const Profile = () => {
                     </Box>
                 </form>
             </Box>
+
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={4000}
+                onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+            >
+                <Alert
+                    severity={snackbar.severity}
+                    onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+                    sx={{ borderRadius: "8px" }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };

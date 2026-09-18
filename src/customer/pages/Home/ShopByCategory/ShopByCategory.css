@@ -1,4 +1,5 @@
-.custome-border{
+.custome-border {
     border: 9px solid;
-    border-color: rgb(253, 58, 91) rgb(99, 99,99);
+    border-color: rgb(253, 58, 91) rgb(99, 99, 99);
+    padding: 6px;
 }

@@ -1,13 +1,12 @@
 import React from "react";
 import HomeCategoryTable from "./HomeCategoryTable";
 
-const ShopByCategory = () =>{
-    return (
+const DealCategoryTable = () =>{
+    return(
         <div>
-
             <HomeCategoryTable />
         </div>
     )
 }
 
-export default ShopByCategory
+export default DealCategoryTable
