@@ -1,0 +1,11 @@
+package com.zivio.domain;
+
+public enum OrderStatus {
+
+    PENDING,
+    PLACED,
+    CONFIRMED,
+    SHIPPED,
+    DELIVERED,
+    CANCELLED
+}
