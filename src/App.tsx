@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 
 import { ThemeProvider } from "@mui/material";
@@ -17,8 +17,12 @@ import UserDetails from "./customer/pages/Account/UserDetails";
 import BecomeSeller from "./Become Seller/BecomeSeller";
 import SellerDashbord from "./seller/pages/SellerDashbord/SellerDashbord";
 import AdminDashbord from "./admin/Pages/Dashboard/Dashboard";
+import { fetchProducts } from "./State/fetchProduct";
 
 function App() {
+  useEffect(()=>{
+fetchProducts()
+  },[])
   return (
     <ThemeProvider theme={customeTheme}>
       <>
