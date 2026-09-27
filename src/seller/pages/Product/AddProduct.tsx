@@ -16,9 +16,14 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import CloseIcon from "@mui/icons-material/Close";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { uploadToCloudinary } from "../../../Util/uploadToCoudinary";
 import { mainCategory } from "../../../data/category/mainCategory";
+import { useAppDispatch } from "../../../State/Store";
+import { createProduct } from "../../../State/seller/sellerProductSlice";
+import { BeautyLevelTwo } from "../../../data/category/LevelTwo/BeautyLevelTwo";
+import { AllLevelTwoCategories } from "../../../data/category/LevelTwo/LevelTwoCategory";
+import { AllLevelThreeCategories } from "../../../data/category/LevelThree/LevelThreeCategory";
 
 // ---- Design tokens ----
 const palette = {
@@ -128,6 +133,7 @@ const AddProduct = () => {
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
 
+    const dispatch = useAppDispatch()
     const formik = useFormik({
         initialValues: {
             title: "",
@@ -150,8 +156,42 @@ const AddProduct = () => {
             } finally {
                 setSubmitting(false);
             }
-        }
+            dispatch(createProduct({request:values,jwt:localStorage.getItem("jwt")}))
+        },
     });
+
+    // Level-2 options are limited to the ones whose parentCategoryId
+    // matches the currently selected main category.
+    const filteredLevelTwo = useMemo(() => {
+        if (!formik.values.category) return [];
+        return AllLevelTwoCategories.filter(
+            (item) => item.parentCategoryId === formik.values.category
+        );
+    }, [formik.values.category]);
+
+    // Level-3 options are limited to the ones whose parentCategoryId
+    // matches the currently selected second category.
+    const filteredLevelThree = useMemo(() => {
+        if (!formik.values.category2) return [];
+        return AllLevelThreeCategories.filter(
+            (item) => item.parentCategoryId === formik.values.category2
+        );
+    }, [formik.values.category2]);
+
+    const handleMainCategoryChange = (event: { target: { value: unknown } }) => {
+        const value = event.target.value;
+        formik.setFieldValue("category", value);
+        // Reset dependent selects so a stale, no-longer-valid choice
+        // can't stay selected under the new main category.
+        formik.setFieldValue("category2", "");
+        formik.setFieldValue("category3", "");
+    };
+
+    const handleCategory2Change = (event: { target: { value: unknown } }) => {
+        const value = event.target.value;
+        formik.setFieldValue("category2", value);
+        formik.setFieldValue("category3", "");
+    };
 
     const handleImageChange = async (
         event: React.ChangeEvent<HTMLInputElement>
@@ -534,7 +574,7 @@ const AddProduct = () => {
                                     id="category"
                                     name="category"
                                     value={formik.values.category}
-                                    onChange={formik.handleChange}
+                                    onChange={handleMainCategoryChange}
                                     label="Category"
                                 >
                                     {
@@ -554,6 +594,7 @@ const AddProduct = () => {
                                 fullWidth
                                 sx={fieldSx}
                                 error={formik.touched.category2 && Boolean(formik.errors.category2)}
+                                disabled={!formik.values.category}
                                 required>
                                 <InputLabel id="category2-label">Second category</InputLabel>
                                 <Select
@@ -561,14 +602,18 @@ const AddProduct = () => {
                                     id="category2"
                                     name="category2"
                                     value={formik.values.category2}
-                                    onChange={formik.handleChange}
+                                    onChange={handleCategory2Change}
                                     label="Second category"
                                 >
-                                    {
-                                        mainCategory.map((item) => (
+                                    {filteredLevelTwo.length === 0 ? (
+                                        <MenuItem value="" disabled>
+                                            <em>Select a category first</em>
+                                        </MenuItem>
+                                    ) : (
+                                        filteredLevelTwo.map((item) => (
                                             <MenuItem key={item.categoryId} value={item.categoryId}>{item.name}</MenuItem>
                                         ))
-                                    }
+                                    )}
                                 </Select>
                                 {formik.touched.category2 && formik.errors.category2 && (
                                     <FormHelperText>{formik.errors.category2}</FormHelperText>
@@ -580,6 +625,7 @@ const AddProduct = () => {
                                 fullWidth
                                 sx={fieldSx}
                                 error={formik.touched.category3 && Boolean(formik.errors.category3)}
+                                disabled={!formik.values.category2}
                                 required>
                                 <InputLabel id="category3-label">Third category</InputLabel>
                                 <Select
@@ -590,11 +636,15 @@ const AddProduct = () => {
                                     onChange={formik.handleChange}
                                     label="Third category"
                                 >
-                                    {
-                                        mainCategory.map((item) => (
+                                    {filteredLevelThree.length === 0 ? (
+                                        <MenuItem value="" disabled>
+                                            <em>Select a second category first</em>
+                                        </MenuItem>
+                                    ) : (
+                                        filteredLevelThree.map((item) => (
                                             <MenuItem key={item.categoryId} value={item.categoryId}>{item.name}</MenuItem>
                                         ))
-                                    }
+                                    )}
                                 </Select>
                                 {formik.touched.category3 && formik.errors.category3 && (
                                     <FormHelperText>{formik.errors.category3}</FormHelperText>

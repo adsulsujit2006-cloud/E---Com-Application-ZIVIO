@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import "./App.css";
 
 import { ThemeProvider } from "@mui/material";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 
 import customeTheme from "./Theme/customeTheme";
 import Navbar from "./customer/components/Navbar/Navbar";
@@ -18,11 +18,29 @@ import BecomeSeller from "./Become Seller/BecomeSeller";
 import SellerDashbord from "./seller/pages/SellerDashbord/SellerDashbord";
 import AdminDashbord from "./admin/Pages/Dashboard/Dashboard";
 import { fetchProducts } from "./State/fetchProduct";
+import { useAppDispatch, useAppSelector } from "./State/Store";
+import { fetchSellerProfile } from "./State/seller/sellerSlice";
 
 function App() {
+  const dispatch = useAppDispatch();
+
+  const {seller} = useAppSelector(store=>store)
+
+  const navigate = useNavigate()
+  useEffect(() => {
+    const jwt = localStorage.getItem("jwt");
+    if (jwt) {
+      dispatch(fetchSellerProfile(jwt));
+    }
+  }, []);
+
   useEffect(()=>{
-fetchProducts()
-  },[])
+    if(seller.profile){
+      navigate("/seller")
+    }
+
+  },[seller.profile])
+
   return (
     <ThemeProvider theme={customeTheme}>
       <>
