@@ -43,107 +43,93 @@ import lombok.RequiredArgsConstructor;
 public class OrderController {
 
 	@Autowired
-    private final OrderService orderService;
+	private OrderService orderService;
 	@Autowired
-    private final UserService userService;
+	private UserService userService;
 	@Autowired
-    private final CartService cartService;
+	private CartService cartService;
 	@Autowired
-    private final SellerService sellerService;
+	private SellerService sellerService;
 	@Autowired
-    private final SellerReportService sellerReportService;
+	private SellerReportService sellerReportService;
 	@Autowired
-    private final PaymentService paymentService;
+	private PaymentService paymentService;
 	@Autowired
-    private final PaymentOrderRepository paymentOrderRepository;
+	private PaymentOrderRepository paymentOrderRepository;
 
-    @PostMapping()
-    public ResponseEntity<PaymentLinkResponse> createOrderHandler(
-            @RequestBody Address shippingAddress,
-            @RequestParam PaymentMethod paymentMethod,
-            @RequestHeader("Authorization") String jwt
-    ) throws Exception {
+	@PostMapping()
+	public ResponseEntity<PaymentLinkResponse> createOrderHandler(@RequestBody Address shippingAddress,
+			@RequestParam PaymentMethod paymentMethod, @RequestHeader("Authorization") String jwt) throws Exception {
 
-        User user = userService.findUserByJwtToken(jwt);
-        Cart cart = cartService.findUserCart(user);
-        Set<Order> orders = orderService.createOrder(user, shippingAddress, cart);
+		User user = userService.findUserByJwtToken(jwt);
+		Cart cart = cartService.findUserCart(user);
+		Set<Order> orders = orderService.createOrder(user, shippingAddress, cart);
 
-        PaymentOrder paymentOrder = paymentService.createOrder(user, orders);
-        PaymentLinkResponse res = new PaymentLinkResponse();
+		PaymentOrder paymentOrder = paymentService.createOrder(user, orders);
+		PaymentLinkResponse res = new PaymentLinkResponse();
 
-        if (paymentMethod.equals(PaymentMethod.RAZORPAY)) {
+		if (paymentMethod.equals(PaymentMethod.RAZORPAY)) {
 
-            PaymentLink payment = paymentService.createRazorpayPaymentLink(
-                    user,
-                    paymentOrder.getAmount(),
-                    paymentOrder.getId()
-            );
+			PaymentLink payment = paymentService.createRazorpayPaymentLink(user, paymentOrder.getAmount(),
+					paymentOrder.getId());
 
-            String paymentUrl = payment.get("short_url");
-            String paymentUrlId = payment.get("id");
+			String paymentUrl = payment.get("short_url");
+			String paymentUrlId = payment.get("id");
 
-            res.setPayment_link_url(paymentUrl);
-            res.setPayment_link_id(paymentUrlId);
+			res.setPayment_link_url(paymentUrl);
+			res.setPayment_link_id(paymentUrlId);
 
-            paymentOrder.setPaymentLinkId(paymentUrlId);
-            paymentOrderRepository.save(paymentOrder);
+			paymentOrder.setPaymentLinkId(paymentUrlId);
+			paymentOrderRepository.save(paymentOrder);
 
-        } else {
+		} else {
 
-            String paymentUrl = paymentService.createStripePaymentLink(
-                    user,
-                    paymentOrder.getAmount(),
-                    paymentOrder.getId()
-            );
+			String paymentUrl = paymentService.createStripePaymentLink(user, paymentOrder.getAmount(),
+					paymentOrder.getId());
 
-            res.setPayment_link_url(paymentUrl);
-        }
+			res.setPayment_link_url(paymentUrl);
+		}
 
-        return new ResponseEntity<>(res, HttpStatus.OK);
-    }
+		return new ResponseEntity<>(res, HttpStatus.OK);
+	}
 
-    @GetMapping("/user")
-    public ResponseEntity<List<Order>> userOrderHistoryHandler(
-            @RequestHeader("Authorization") String jwt
-    ) throws Exception {
+	@GetMapping("/user")
+	public ResponseEntity<List<Order>> userOrderHistoryHandler(@RequestHeader("Authorization") String jwt)
+			throws Exception {
 
-        User user = userService.findUserByJwtToken(jwt);
-        List<Order> orders = orderService.userOrderHistory(user.getId());
+		User user = userService.findUserByJwtToken(jwt);
+		List<Order> orders = orderService.userOrderHistory(user.getId());
 
-        return new ResponseEntity<>(orders, HttpStatus.ACCEPTED);
-    }
+		return new ResponseEntity<>(orders, HttpStatus.ACCEPTED);
+	}
 
-    @GetMapping("/{orderItemId}")
-    public ResponseEntity<OrderItem> getOrderById(
-            @PathVariable Long orderItemId,
-            @RequestHeader("Authorization") String jwt
-    ) throws Exception {
+	@GetMapping("/{orderItemId}")
+	public ResponseEntity<OrderItem> getOrderById(@PathVariable Long orderItemId,
+			@RequestHeader("Authorization") String jwt) throws Exception {
 
-        User user = userService.findUserByJwtToken(jwt);
+		User user = userService.findUserByJwtToken(jwt);
 
-        OrderItem orderItem = orderService.getOrderItemById(orderItemId);
+		OrderItem orderItem = orderService.getOrderItemById(orderItemId);
 
-        return new ResponseEntity<>(orderItem, HttpStatus.ACCEPTED);
-    }
+		return new ResponseEntity<>(orderItem, HttpStatus.ACCEPTED);
+	}
 
-    @DeleteMapping("/{orderId}/cancel")
-    public ResponseEntity<Order> cancleOrder(
-            @PathVariable Long orderId,
-            @RequestHeader("Authorization") String jwt
-    ) throws Exception {
+	@DeleteMapping("/{orderId}/cancel")
+	public ResponseEntity<Order> cancleOrder(@PathVariable Long orderId, @RequestHeader("Authorization") String jwt)
+			throws Exception {
 
-        User user = userService.findUserByJwtToken(jwt);
+		User user = userService.findUserByJwtToken(jwt);
 
-        Order order = orderService.cancleOrder(orderId, user);
+		Order order = orderService.cancleOrder(orderId, user);
 
-        Seller seller = sellerService.getSellerById(order.getSellerId());
-        SellerReport report = sellerReportService.getSellerReport(seller);
+		Seller seller = sellerService.getSellerById(order.getSellerId());
+		SellerReport report = sellerReportService.getSellerReport(seller);
 
-        report.setCancledOrders(report.getCancledOrders() + 1);
-        report.setTotalRefunds(report.getTotalRefunds() + order.getTotalSellingPrice());
+		report.setCancledOrders(report.getCancledOrders() + 1);
+		report.setTotalRefunds(report.getTotalRefunds() + order.getTotalSellingPrice());
 
-        sellerReportService.updateSellerReport(report);
+		sellerReportService.updateSellerReport(report);
 
-        return ResponseEntity.ok(order);
-    }
+		return ResponseEntity.ok(order);
+	}
 }

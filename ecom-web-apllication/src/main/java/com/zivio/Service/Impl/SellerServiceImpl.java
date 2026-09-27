@@ -23,13 +23,13 @@ import lombok.RequiredArgsConstructor;
 public class SellerServiceImpl implements SellerService {
 
 	@Autowired
-    private final SellerRepository sellerRepository;
+    private SellerRepository sellerRepository;
 	@Autowired
-    private final JwtProvider jwtProvider;
+    private JwtProvider jwtProvider;
 	@Autowired
-    private final PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 	@Autowired
-    private final AddressRepository addressRepository;
+    private AddressRepository addressRepository;
 
     @Override
     public Seller getSellerProfile(String jwt) throws Exception {

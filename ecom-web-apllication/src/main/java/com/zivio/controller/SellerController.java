@@ -38,15 +38,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequestMapping("/sellers")
 public class SellerController {
 	@Autowired
-    private final EmailServcie emailServcie;
+    private EmailServcie emailServcie;
 	@Autowired
-    private final SellerService sellerService;
+    private SellerService sellerService;
 	@Autowired
-    private final VerificationCodeRepository verificationCodeRepository;
+    private VerificationCodeRepository verificationCodeRepository;
 	@Autowired
-    private final AuthService authService;
+    private AuthService authService;
 	@Autowired
-    private final SellerReportService sellerReportService;
+    private SellerReportService sellerReportService;
 
     @PostMapping("/login")
 

@@ -3,6 +3,7 @@ package com.zivio.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,7 +16,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EmailServcie {
 
-    private final JavaMailSender javaMailSender;
+    @Autowired 
+    private  JavaMailSender javaMailSender;
 
     public void sendVerificationOtpEmail(String userEmail, String otp, String subject, String text) throws MessagingException {
 

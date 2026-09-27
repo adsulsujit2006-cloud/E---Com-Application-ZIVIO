@@ -31,9 +31,9 @@ import lombok.RequiredArgsConstructor;
 public class ProductServiceImpl implements ProductService {
 
 	@Autowired
-    private final ProductRepository productRepository;
+    private ProductRepository productRepository;
 	@Autowired
-    private final CategoryRepositery categoryRepositery;
+    private CategoryRepositery categoryRepositery;
 
     @Override
     public Product createProduct(CreateProductRequest req, Seller seller) {

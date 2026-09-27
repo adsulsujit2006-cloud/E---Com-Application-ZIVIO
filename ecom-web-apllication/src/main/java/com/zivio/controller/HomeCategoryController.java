@@ -24,9 +24,9 @@ import lombok.RequiredArgsConstructor;
 public class HomeCategoryController {
 
 	@Autowired
-    private final HomeCategoryService homeCategoryService;
+    private HomeCategoryService homeCategoryService;
 	@Autowired
-    private final HomeService homeService;
+    private  HomeService homeService;
 
     @PostMapping("/home/categories")
     public ResponseEntity<Home> createHomeCategory(

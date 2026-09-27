@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class ProductController {
 
 	@Autowired
-    private final ProductService productService;
+    private ProductService productService;
 
     @GetMapping("/{productId}")
     public ResponseEntity<Product> getProductById(

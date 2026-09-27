@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class HomeServiceImpl implements HomeService {
 
 	@Autowired
-    private final DealRepository dealRepository;
+    private DealRepository dealRepository;
 
     @Override
     public Home createHomePageData(List<HomeCategory> allCategories) {

@@ -30,9 +30,9 @@ import lombok.RequiredArgsConstructor;
 public class SellerProductController {
 
 	@Autowired
-    private final ProductService productService;
+    private ProductService productService;
 	@Autowired
-    private final SellerService sellerService;
+    private SellerService sellerService;
 
     @GetMapping()
     public ResponseEntity<List<Product>> getProductBySellerId(

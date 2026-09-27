@@ -22,11 +22,11 @@ import lombok.RequiredArgsConstructor;
 public class CouponServiceImpl implements CouponService {
 
 	@Autowired
-	private final UserRepository userRepository;
+	private UserRepository userRepository;
 	@Autowired
-	private final CouponRepository coupanRepository;
+	private CouponRepository coupanRepository;
 	@Autowired
-	private final CartRepository cartRepository;
+	private CartRepository cartRepository;
 
 	@Override
 	public Cart applyCoupon(String code, double orderValue, User user) throws Exception {

@@ -38,21 +38,21 @@ import lombok.RequiredArgsConstructor;
 public class AuthServiceImpl implements AuthService {
 
 	@Autowired
-    private final SellerRepository sellerRepository;
+    private SellerRepository sellerRepository;
 	@Autowired
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-	private final PasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;
     @Autowired
-    private final CartRepository cartRepository;
+    private CartRepository cartRepository;
     @Autowired
-    private final JwtProvider jwtProvider;
+    private JwtProvider jwtProvider;
     @Autowired
-    private final VerificationCodeRepository verificationCodeRepository;
+    private VerificationCodeRepository verificationCodeRepository;
     @Autowired
-    private final EmailServcie emailService;
+    private EmailServcie emailService;
     @Autowired
-    private final CustomUserServiceImpl customUserServiceImpl;
+    private CustomUserServiceImpl customUserServiceImpl;
 
     @Override
     public String createUser(SignupRequest req) throws Exception {

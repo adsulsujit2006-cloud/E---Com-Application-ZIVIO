@@ -17,9 +17,9 @@ import lombok.RequiredArgsConstructor;
 public class DealService implements com.zivio.Service.DealService {
 
 	@Autowired
-    private final DealRepository dealRepository;
+    private DealRepository dealRepository;
 	@Autowired
-    private final HomeCategoryRepository homeCategoryRepository;
+    private HomeCategoryRepository homeCategoryRepository;
 
     @Override
     public List<Deal> getDeals() {

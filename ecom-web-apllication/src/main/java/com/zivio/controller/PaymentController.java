@@ -31,17 +31,17 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/payment")
 public class PaymentController {
 	@Autowired
-    private final PaymentService paymentService;
+    private PaymentService paymentService;
+	
+    private UserService userService;
 	@Autowired
-    private final UserService userService;
+    private SellerService sellerService;
 	@Autowired
-    private final SellerService sellerService;
+    private OrderService orderService;
 	@Autowired
-    private final OrderService orderService;
+    private SellerReportService sellerReportService;
 	@Autowired
-    private final SellerReportService sellerReportService;
-	@Autowired
-    private final TransactionService transactionService;
+    private TransactionService transactionService;
 
     @GetMapping("/{paymentId}")
     public ResponseEntity<Apiresponce> paymentSuccessHandler(

@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
 	@Autowired
-    private final UserService userService;
+    private UserService userService;
 
     @GetMapping("/users/profile")
     public ResponseEntity<User> createUserHandler(

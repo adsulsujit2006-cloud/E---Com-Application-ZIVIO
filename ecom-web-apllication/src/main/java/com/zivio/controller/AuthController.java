@@ -23,7 +23,7 @@ public class AuthController {
 
    // private final UserRepository userRepository;
 	@Autowired
-    private final AuthService authService;
+    private AuthService authService;
 
     @PostMapping("/signup")
     public ResponseEntity<AuthResponce> createUserHandler(@RequestBody SignupRequest req) throws Exception {

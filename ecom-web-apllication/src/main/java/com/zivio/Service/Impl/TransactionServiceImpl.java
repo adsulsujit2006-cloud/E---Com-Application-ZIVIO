@@ -19,9 +19,9 @@ import lombok.RequiredArgsConstructor;
 public class TransactionServiceImpl implements TransactionService {
 
 	@Autowired
-    private final TransactionRepository transactionRepository;
+    private TransactionRepository transactionRepository;
 	@Autowired
-    private final SellerRepository sellerRepository;
+    private SellerRepository sellerRepository;
 
     @Override
     public Transaction createTransaction(Order order) {

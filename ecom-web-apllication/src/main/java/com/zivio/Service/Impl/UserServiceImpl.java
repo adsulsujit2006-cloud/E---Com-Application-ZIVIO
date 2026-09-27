@@ -15,9 +15,9 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 
 	@Autowired
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 	@Autowired
-    private final JwtProvider jwtProvider;
+    private JwtProvider jwtProvider;
 
     @Override
     public User findUserByJwtToken(String jwt) throws Exception {

@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class HomeCategoryServiceImpl implements HomeCategoryService {
 
 	@Autowired
-    private final HomeCategoryRepository homeCategoryRepository;
+    private HomeCategoryRepository homeCategoryRepository;
 
     @Override
     public HomeCategory createHomeCategory(HomeCategory homeCategory) {

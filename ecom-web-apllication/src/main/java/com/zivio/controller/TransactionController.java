@@ -22,9 +22,9 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("api/transactions")
 public class TransactionController {
 	@Autowired
-    private final TransactionService transactionService;
+    private TransactionService transactionService;
 	@Autowired
-    private final SellerService sellerService;
+    private SellerService sellerService;
 
     @GetMapping("/seller")
     public ResponseEntity<List<Transaction>> getTransactionBySellerId(

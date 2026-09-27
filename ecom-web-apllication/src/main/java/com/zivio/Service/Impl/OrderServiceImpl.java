@@ -30,11 +30,11 @@ import lombok.RequiredArgsConstructor;
 public class OrderServiceImpl implements OrderService {
 
 	@Autowired
-    private final OrderRepository orderRepository;
+    private OrderRepository orderRepository;
 	@Autowired
-    private final AddressRepository addressRepository;
+    private AddressRepository addressRepository;
 	@Autowired
-    private final OrderItemRepository orderItemRepository;
+    private OrderItemRepository orderItemRepository;
 
     @Override
     public Set<Order> createOrder(User user, Address shippingAddress, Cart cart) {

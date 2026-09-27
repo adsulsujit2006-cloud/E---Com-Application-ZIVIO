@@ -24,9 +24,9 @@ import lombok.RequiredArgsConstructor;
 public class CustomUserServiceImpl implements UserDetailsService {
 
 	@Autowired
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
 	@Autowired
-    private final SellerRepository sellerRepository;
+    private SellerRepository sellerRepository;
 
     //private static final String SELLER_PREFIX = "seller_";
 

@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class ReviewServiceImpl implements ReviewService {
 
 	@Autowired
-    private final ReviewRepository reviewRepository;  
+    private ReviewRepository reviewRepository;  
     @Override
     public Review createReview(CreateReviewRequest req, User user, Product product) {
        Review review = new Review();

@@ -29,11 +29,11 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/review")
 public class ReviewController {
 	@Autowired
-    private final ReviewService reviewService;
+    private ReviewService reviewService;
 	@Autowired
-    private final UserService userService;
+    private UserService userService;
 	@Autowired
-    private final ProductService productService;
+    private ProductService productService;
 
     @GetMapping("/products/{productId}/reviews")
     public ResponseEntity<List<Review>> getReviewByProductId(

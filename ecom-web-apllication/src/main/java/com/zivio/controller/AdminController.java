@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminController {
 
 	@Autowired
-    private final SellerService sellerService;
+    private  SellerService sellerService;
 
     public ResponseEntity<Seller> updateSellerStatus(@PathVariable Long id,
         @PathVariable AccountStatus status) throws Exception 

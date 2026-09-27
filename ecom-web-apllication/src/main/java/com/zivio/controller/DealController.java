@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class DealController {
 
 	@Autowired
-    private final DealService dealService;
+    private DealService dealService;
 
     @PostMapping
     public ResponseEntity<Deal> createDeals(

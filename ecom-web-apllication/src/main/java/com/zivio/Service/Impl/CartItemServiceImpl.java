@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class CartItemServiceImpl implements CartItemService{
 
 	@Autowired
-    private final CartItemRepositery cartItemRepositery;
+    private CartItemRepositery cartItemRepositery;
     @Override
     public CartItem updateCartItem(Long userId, Long id, CartItem cartItem) throws Exception {
       CartItem item = findCartItemById(id);

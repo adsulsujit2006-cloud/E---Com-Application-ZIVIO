@@ -28,9 +28,9 @@ import lombok.RequiredArgsConstructor;
 public class SellerOrder {
 
 	@Autowired
-    private final OrderService orderService;
+    private OrderService orderService;
 	@Autowired
-    private final SellerService sellerService;
+    private SellerService sellerService;
 
     @GetMapping()
     public ResponseEntity<List<Order>> getAllOrderHandler(

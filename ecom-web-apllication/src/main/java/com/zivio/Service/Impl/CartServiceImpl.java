@@ -17,9 +17,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService{
 	@Autowired
-    private final CartRepository cartRepository;
+    private CartRepository cartRepository;
 	@Autowired
-    private final CartItemRepositery cartItemRepositery;
+    private CartItemRepositery cartItemRepositery;
 
 @Override
 public CartItem addCartItem(User user, Product product, String size, int quantity) {

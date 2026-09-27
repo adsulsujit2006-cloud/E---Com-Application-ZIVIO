@@ -25,9 +25,9 @@ import lombok.RequiredArgsConstructor;
 public class AdminCoupanController {
 	
 	@Autowired
-    private final CouponService coupanService;
+    private  CouponService coupanService;
 	@Autowired
-    private final UserService userService;
+    private UserService userService;
 
     @PostMapping("/apply")
     public ResponseEntity<Cart> applyCoupan(

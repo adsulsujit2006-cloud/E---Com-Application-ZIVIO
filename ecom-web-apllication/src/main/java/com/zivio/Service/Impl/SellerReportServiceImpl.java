@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class SellerReportServiceImpl implements SellerReportService {
 
 	@Autowired
-    private final SellerReportRepository sellerReportRepository;
+    private SellerReportRepository sellerReportRepository;
     @Override
     public SellerReport getSellerReport(Seller seller) {
         SellerReport sr = sellerReportRepository.findBySellerId(seller.getId());
