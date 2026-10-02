@@ -2,6 +2,8 @@ import { AddPhotoAlternate } from "@mui/icons-material";
 import {
     Box,
     Button,
+    Checkbox,
+    Chip,
     CircularProgress,
     Divider,
     FormControl,
@@ -9,6 +11,7 @@ import {
     Grid,
     IconButton,
     InputLabel,
+    ListItemText,
     MenuItem,
     Select,
     TextField,
@@ -21,7 +24,6 @@ import { uploadToCloudinary } from "../../../Util/uploadToCoudinary";
 import { mainCategory } from "../../../data/category/mainCategory";
 import { useAppDispatch } from "../../../State/Store";
 import { createProduct } from "../../../State/seller/sellerProductSlice";
-import { BeautyLevelTwo } from "../../../data/category/LevelTwo/BeautyLevelTwo";
 import { AllLevelTwoCategories } from "../../../data/category/LevelTwo/LevelTwoCategory";
 import { AllLevelThreeCategories } from "../../../data/category/LevelThree/LevelThreeCategory";
 
@@ -61,8 +63,6 @@ const SectionLabel = ({ title, hint }: { title: string; hint?: string }) => (
     </Box>
 );
 
-// Local color options — MUI's own `colors` export is a palette object, not
-// a list of { name, hex } items, so we define our own here.
 const colors = [
     { name: "Pink", hex: "#FFC0CB" },
     { name: "Green", hex: "#008000" },
@@ -128,16 +128,62 @@ export const sizes = [
     { name: "4XL" },
 ];
 
+// ---- Extra product attributes ----
+// `name` must match the field names in your Java entity / request DTO exactly
+// (including the spellings "wavePAttern" and "netQuentity").
+const attributeFields: { name: string; label: string; placeholder: string }[] = [
+    { name: "sleeveLength", label: "Sleeve length", placeholder: "e.g. Short sleeves" },
+    { name: "topType", label: "Top type", placeholder: "e.g. Kurta" },
+    { name: "topPattern", label: "Top pattern", placeholder: "e.g. Floral print" },
+    { name: "neck", label: "Neck", placeholder: "e.g. Round neck" },
+    { name: "topShape", label: "Top shape", placeholder: "e.g. Straight" },
+    { name: "topLength", label: "Top length", placeholder: "e.g. Knee length" },
+    { name: "bottomType", label: "Bottom type", placeholder: "e.g. Palazzo" },
+    { name: "bottomPattern", label: "Bottom pattern", placeholder: "e.g. Solid" },
+    { name: "bottomClosure", label: "Bottom closure", placeholder: "e.g. Elastic waist" },
+    { name: "waistband", label: "Waistband", placeholder: "e.g. Elasticated" },
+    { name: "weaveType", label: "Weave type", placeholder: "e.g. Regular" },
+    { name: "wavePAttern", label: "Wave pattern", placeholder: "e.g. Zig-zag" },
+    { name: "ornamentation", label: "Ornamentation", placeholder: "e.g. Embroidery" },
+    { name: "designStyling", label: "Design styling", placeholder: "e.g. Regular" },
+    { name: "packageBottom", label: "Package bottom", placeholder: "e.g. 1 bottom" },
+    { name: "netQuentity", label: "Net quantity", placeholder: "e.g. 1" },
+];
+
+// ---- Validation ----
+const validate = (values: any) => {
+    const errors: Record<string, string> = {};
+    if (!values.title.trim()) errors.title = "Name is required";
+    if (!values.description.trim()) errors.description = "Description is required";
+    if (!values.mrpPrice) errors.mrpPrice = "MRP is required";
+    if (!values.sellingPrice) errors.sellingPrice = "Selling price is required";
+    if (
+        values.mrpPrice &&
+        values.sellingPrice &&
+        Number(values.sellingPrice) > Number(values.mrpPrice)
+    ) {
+        errors.sellingPrice = "Selling price cannot be more than MRP";
+    }
+    if (!values.quantity) errors.quantity = "Quantity is required";
+    if (!values.color) errors.color = "Select a color";
+    if (values.sizes.length === 0) errors.sizes = "Select at least one size";
+    if (!values.category) errors.category = "Select a category";
+    if (!values.category2) errors.category2 = "Select a second category";
+    if (!values.category3) errors.category3 = "Select a third category";
+    return errors;
+};
+
 const AddProduct = () => {
     const [uploadImage, setUploadingImage] = useState(false);
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
 
-    const dispatch = useAppDispatch()
+    const dispatch = useAppDispatch();
+
     const formik = useFormik({
         initialValues: {
             title: "",
-            Description: "",
+            description: "",
             mrpPrice: "",
             sellingPrice: "",
             quantity: "",
@@ -146,22 +192,68 @@ const AddProduct = () => {
             category: "",
             category2: "",
             category3: "",
-            sizes: "",
+            sizes: [] as string[], // multiple sizes
+
+            // ---- Extra product attributes (all optional) ----
+            sleeveLength: "",
+            topType: "",
+            topPattern: "",
+            neck: "",
+            bottomClosure: "",
+            ornamentation: "",
+            weaveType: "",
+            topShape: "",
+            bottomType: "",
+            designStyling: "",
+            topLength: "",
+            bottomPattern: "",
+            waistband: "",
+            wavePAttern: "",
+            packageBottom: "",
+            netQuentity: "",
         },
+        validate,
 
         onSubmit: async (values) => {
-            setSubmitting(true);
-            try {
-                console.log(values);
-            } finally {
-                setSubmitting(false);
+            if (values.images.length === 0) {
+                setUploadError("Add at least one photo");
+                return;
             }
-            dispatch(createProduct({request:values,jwt:localStorage.getItem("jwt")}))
+
+            setSubmitting(true);
+            let saved = false;
+
+            try {
+                const request = {
+                    ...values,
+                    mrpPrice: Number(values.mrpPrice),
+                    sellingPrice: Number(values.sellingPrice),
+                    quantity: Number(values.quantity),
+                    // stored in DB as "S,M,L"
+                    sizes: values.sizes.join(","),
+                };
+
+                console.log("Product request:", request);
+
+                await dispatch(
+                    createProduct({ request, jwt: localStorage.getItem("jwt") })
+                ).unwrap();
+
+                saved = true;
+                alert("Product added successfully");
+
+                // Refresh the page automatically after a successful save
+                window.location.reload();
+            } catch (error: any) {
+                console.error("Create product failed:", error);
+                alert(typeof error === "string" ? error : "Failed to add product");
+            } finally {
+                // On success keep the loader running until the reload happens
+                if (!saved) setSubmitting(false);
+            }
         },
     });
 
-    // Level-2 options are limited to the ones whose parentCategoryId
-    // matches the currently selected main category.
     const filteredLevelTwo = useMemo(() => {
         if (!formik.values.category) return [];
         return AllLevelTwoCategories.filter(
@@ -169,8 +261,6 @@ const AddProduct = () => {
         );
     }, [formik.values.category]);
 
-    // Level-3 options are limited to the ones whose parentCategoryId
-    // matches the currently selected second category.
     const filteredLevelThree = useMemo(() => {
         if (!formik.values.category2) return [];
         return AllLevelThreeCategories.filter(
@@ -179,64 +269,47 @@ const AddProduct = () => {
     }, [formik.values.category2]);
 
     const handleMainCategoryChange = (event: { target: { value: unknown } }) => {
-        const value = event.target.value;
-        formik.setFieldValue("category", value);
-        // Reset dependent selects so a stale, no-longer-valid choice
-        // can't stay selected under the new main category.
+        formik.setFieldValue("category", event.target.value);
         formik.setFieldValue("category2", "");
         formik.setFieldValue("category3", "");
     };
 
     const handleCategory2Change = (event: { target: { value: unknown } }) => {
-        const value = event.target.value;
-        formik.setFieldValue("category2", value);
+        formik.setFieldValue("category2", event.target.value);
         formik.setFieldValue("category3", "");
     };
 
-    const handleImageChange = async (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    // Multiple sizes: MUI gives an array (or a comma string on autofill)
+    const handleSizesChange = (event: { target: { value: unknown } }) => {
+        const value = event.target.value;
+        formik.setFieldValue(
+            "sizes",
+            typeof value === "string" ? value.split(",") : value
+        );
+    };
 
+    const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-
-        if (!file) {
-            return;
-        }
+        if (!file) return;
 
         setUploadError(null);
 
         try {
-
             setUploadingImage(true);
-
             const imageUrl = await uploadToCloudinary(file);
-
-            console.log("Uploaded Image URL:", imageUrl);
-
-            formik.setFieldValue("images", [
-                ...formik.values.images,
-                imageUrl,
-            ]);
-
+            formik.setFieldValue("images", [...formik.values.images, imageUrl]);
         } catch (error: any) {
-
             console.error("Image upload failed:", error);
             setUploadError(error?.message || "Image upload failed. Please try again.");
-
         } finally {
-
             setUploadingImage(false);
-
-            // Reset input
             event.target.value = "";
         }
     };
 
     const handleRemoveImage = (index: number) => {
         const updateImages = [...formik.values.images];
-
         updateImages.splice(index, 1);
-
         formik.setFieldValue("images", updateImages);
     };
 
@@ -278,10 +351,7 @@ const AddProduct = () => {
                                     onChange={handleImageChange}
                                 />
 
-                                <label
-                                    className="relative"
-                                    htmlFor="fileInput"
-                                >
+                                <label className="relative" htmlFor="fileInput">
                                     <Box
                                         sx={{
                                             width: "96px",
@@ -323,8 +393,8 @@ const AddProduct = () => {
                                             <CircularProgress size={22} sx={{ color: palette.accent }} />
                                         </Box>
                                     )}
-
                                 </label>
+
                                 <div className="flex flex-wrap gap-3">
                                     {formik.values.images.map((image, index) => (
                                         <div
@@ -373,7 +443,6 @@ const AddProduct = () => {
                                             </IconButton>
                                         </div>
                                     ))}
-
                                 </div>
                             </Box>
 
@@ -399,9 +468,11 @@ const AddProduct = () => {
                                 label="Name"
                                 value={formik.values.title}
                                 onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
                                 error={formik.touched.title && Boolean(formik.errors.title)}
                                 helperText={formik.touched.title && formik.errors.title}
-                                required />
+                                required
+                            />
                         </Grid>
                         <Grid size={{ xs: 12 }}>
                             <TextField
@@ -410,14 +481,13 @@ const AddProduct = () => {
                                 fullWidth
                                 sx={fieldSx}
                                 id="description"
-                                name="Description"
+                                name="description"
                                 label="Description"
-                                value={formik.values.Description}
+                                value={formik.values.description}
                                 onChange={formik.handleChange}
-                                error={
-                                    formik.touched.Description && Boolean(formik.errors.Description)
-                                }
-                                helperText={formik.touched.Description && formik.errors.Description}
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.description && Boolean(formik.errors.description)}
+                                helperText={formik.touched.description && formik.errors.description}
                                 required
                             />
                         </Grid>
@@ -438,6 +508,7 @@ const AddProduct = () => {
                                 type="number"
                                 value={formik.values.mrpPrice}
                                 onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
                                 error={formik.touched.mrpPrice && Boolean(formik.errors.mrpPrice)}
                                 helperText={formik.touched.mrpPrice && formik.errors.mrpPrice}
                                 required
@@ -453,13 +524,9 @@ const AddProduct = () => {
                                 type="number"
                                 value={formik.values.sellingPrice}
                                 onChange={formik.handleChange}
-                                error={
-                                    formik.touched.sellingPrice &&
-                                    Boolean(formik.errors.sellingPrice)
-                                }
-                                helperText={
-                                    formik.touched.sellingPrice && formik.errors.sellingPrice
-                                }
+                                onBlur={formik.handleBlur}
+                                error={formik.touched.sellingPrice && Boolean(formik.errors.sellingPrice)}
+                                helperText={formik.touched.sellingPrice && formik.errors.sellingPrice}
                                 required
                             />
                         </Grid>
@@ -473,6 +540,7 @@ const AddProduct = () => {
                                 type="number"
                                 value={formik.values.quantity}
                                 onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
                                 error={formik.touched.quantity && Boolean(formik.errors.quantity)}
                                 helperText={formik.touched.quantity && formik.errors.quantity}
                                 required
@@ -483,7 +551,7 @@ const AddProduct = () => {
 
                         {/* ---- Variants ---- */}
                         <Grid size={{ xs: 12 }}>
-                            <SectionLabel title="Variants" />
+                            <SectionLabel title="Variants" hint="You can select more than one size." />
                         </Grid>
                         <Grid size={{ xs: 12, md: 4, lg: 3 }}>
                             <FormControl
@@ -499,31 +567,32 @@ const AddProduct = () => {
                                     name="color"
                                     value={formik.values.color}
                                     onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
                                     label="Color"
                                 >
                                     <MenuItem value="">
                                         <em>None</em>
                                     </MenuItem>
-                                    {
-                                        colors.map((color, index) => (
-                                            <MenuItem key={index} value={color.name}>
-                                                <div className="flex gap-3 items-center">
-                                                    <span
-                                                        style={{ background: color.hex }}
-                                                        className={`h-5 w-5 rounded-full flex-shrink-0 ${color.name === "White" || color.name === "Off White" ? "border" : ""}`}
-                                                    />
-                                                    <p>{color.name}</p>
-                                                </div>
-                                            </MenuItem>
-                                        ))
-                                    }
+                                    {colors.map((color, index) => (
+                                        <MenuItem key={index} value={color.name}>
+                                            <div className="flex gap-3 items-center">
+                                                <span
+                                                    style={{ background: color.hex }}
+                                                    className={`h-5 w-5 rounded-full flex-shrink-0 ${color.name === "White" || color.name === "Off White" ? "border" : ""}`}
+                                                />
+                                                <p>{color.name}</p>
+                                            </div>
+                                        </MenuItem>
+                                    ))}
                                 </Select>
                                 {formik.touched.color && formik.errors.color && (
                                     <FormHelperText>{formik.errors.color}</FormHelperText>
                                 )}
                             </FormControl>
                         </Grid>
-                        <Grid size={{ xs: 12, md: 4, lg: 3 }}>
+
+                        {/* ---- MULTIPLE SIZES ---- */}
+                        <Grid size={{ xs: 12, md: 8, lg: 6 }}>
                             <FormControl
                                 fullWidth
                                 sx={fieldSx}
@@ -535,26 +604,59 @@ const AddProduct = () => {
                                     labelId="sizes-label"
                                     id="sizes"
                                     name="sizes"
+                                    multiple
                                     value={formik.values.sizes}
-                                    onChange={formik.handleChange}
+                                    onChange={handleSizesChange}
+                                    onBlur={() => formik.setFieldTouched("sizes", true)}
                                     label="Sizes"
+                                    renderValue={(selected) => (
+                                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                                            {(selected as string[]).map((value) => (
+                                                <Chip key={value} label={value} size="small" />
+                                            ))}
+                                        </Box>
+                                    )}
                                 >
-                                    <MenuItem value="">
-                                        <em>None</em>
-                                    </MenuItem>
-                                    {
-                                        sizes.map((size, index) => (
-                                            <MenuItem key={index} value={size.name}>
-                                                {size.name}
-                                            </MenuItem>
-                                        ))
-                                    }
+                                    {sizes.map((size) => (
+                                        <MenuItem key={size.name} value={size.name}>
+                                            <Checkbox
+                                                checked={formik.values.sizes.includes(size.name)}
+                                                sx={{ color: palette.border, "&.Mui-checked": { color: palette.accent } }}
+                                            />
+                                            <ListItemText primary={size.name} />
+                                        </MenuItem>
+                                    ))}
                                 </Select>
                                 {formik.touched.sizes && formik.errors.sizes && (
-                                    <FormHelperText>{formik.errors.sizes}</FormHelperText>
+                                    <FormHelperText>{formik.errors.sizes as string}</FormHelperText>
                                 )}
                             </FormControl>
                         </Grid>
+
+                        <Grid size={{ xs: 12 }}><Divider sx={{ borderColor: palette.border }} /></Grid>
+
+                        {/* ---- Product attributes ---- */}
+                        <Grid size={{ xs: 12 }}>
+                            <SectionLabel
+                                title="Product attributes"
+                                hint="Optional. Fill in what applies to this product."
+                            />
+                        </Grid>
+                        {attributeFields.map((field) => (
+                            <Grid key={field.name} size={{ xs: 12, sm: 6, md: 4 }}>
+                                <TextField
+                                    fullWidth
+                                    sx={fieldSx}
+                                    id={field.name}
+                                    name={field.name}
+                                    label={field.label}
+                                    placeholder={field.placeholder}
+                                    value={(formik.values as Record<string, any>)[field.name]}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                />
+                            </Grid>
+                        ))}
 
                         <Grid size={{ xs: 12 }}><Divider sx={{ borderColor: palette.border }} /></Grid>
 
@@ -562,12 +664,13 @@ const AddProduct = () => {
                         <Grid size={{ xs: 12 }}>
                             <SectionLabel title="Category" hint="Choose up to three levels to help buyers find this product." />
                         </Grid>
-                        <Grid size={{ xs: 12, md: 4, lg: 4 }}>
+                        <Grid size={{ xs: 12, md: 4 }}>
                             <FormControl
                                 fullWidth
                                 sx={fieldSx}
                                 error={formik.touched.category && Boolean(formik.errors.category)}
-                                required>
+                                required
+                            >
                                 <InputLabel id="category-label">Category</InputLabel>
                                 <Select
                                     labelId="category-label"
@@ -575,13 +678,14 @@ const AddProduct = () => {
                                     name="category"
                                     value={formik.values.category}
                                     onChange={handleMainCategoryChange}
+                                    onBlur={formik.handleBlur}
                                     label="Category"
                                 >
-                                    {
-                                        mainCategory.map((item) => (
-                                            <MenuItem key={item.categoryId} value={item.categoryId}>{item.name}</MenuItem>
-                                        ))
-                                    }
+                                    {mainCategory.map((item) => (
+                                        <MenuItem key={item.categoryId} value={item.categoryId}>
+                                            {item.name}
+                                        </MenuItem>
+                                    ))}
                                 </Select>
                                 {formik.touched.category && formik.errors.category && (
                                     <FormHelperText>{formik.errors.category}</FormHelperText>
@@ -589,13 +693,14 @@ const AddProduct = () => {
                             </FormControl>
                         </Grid>
 
-                        <Grid size={{ xs: 12, md: 4, lg: 4 }}>
+                        <Grid size={{ xs: 12, md: 4 }}>
                             <FormControl
                                 fullWidth
                                 sx={fieldSx}
                                 error={formik.touched.category2 && Boolean(formik.errors.category2)}
                                 disabled={!formik.values.category}
-                                required>
+                                required
+                            >
                                 <InputLabel id="category2-label">Second category</InputLabel>
                                 <Select
                                     labelId="category2-label"
@@ -603,6 +708,7 @@ const AddProduct = () => {
                                     name="category2"
                                     value={formik.values.category2}
                                     onChange={handleCategory2Change}
+                                    onBlur={formik.handleBlur}
                                     label="Second category"
                                 >
                                     {filteredLevelTwo.length === 0 ? (
@@ -611,7 +717,9 @@ const AddProduct = () => {
                                         </MenuItem>
                                     ) : (
                                         filteredLevelTwo.map((item) => (
-                                            <MenuItem key={item.categoryId} value={item.categoryId}>{item.name}</MenuItem>
+                                            <MenuItem key={item.categoryId} value={item.categoryId}>
+                                                {item.name}
+                                            </MenuItem>
                                         ))
                                     )}
                                 </Select>
@@ -620,13 +728,15 @@ const AddProduct = () => {
                                 )}
                             </FormControl>
                         </Grid>
-                        <Grid size={{ xs: 12, md: 4, lg: 4 }}>
+
+                        <Grid size={{ xs: 12, md: 4 }}>
                             <FormControl
                                 fullWidth
                                 sx={fieldSx}
                                 error={formik.touched.category3 && Boolean(formik.errors.category3)}
                                 disabled={!formik.values.category2}
-                                required>
+                                required
+                            >
                                 <InputLabel id="category3-label">Third category</InputLabel>
                                 <Select
                                     labelId="category3-label"
@@ -634,6 +744,7 @@ const AddProduct = () => {
                                     name="category3"
                                     value={formik.values.category3}
                                     onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
                                     label="Third category"
                                 >
                                     {filteredLevelThree.length === 0 ? (
@@ -642,7 +753,9 @@ const AddProduct = () => {
                                         </MenuItem>
                                     ) : (
                                         filteredLevelThree.map((item) => (
-                                            <MenuItem key={item.categoryId} value={item.categoryId}>{item.name}</MenuItem>
+                                            <MenuItem key={item.categoryId} value={item.categoryId}>
+                                                {item.name}
+                                            </MenuItem>
                                         ))
                                     )}
                                 </Select>

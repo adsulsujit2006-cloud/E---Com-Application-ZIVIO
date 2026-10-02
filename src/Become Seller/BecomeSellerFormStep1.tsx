@@ -1,46 +1,37 @@
-
 import {
     Box,
     TextField,
     Typography,
     Paper,
-    InputAdornment
+    InputAdornment,
 } from "@mui/material";
-
 import React from "react";
-
 import PhoneIcon from "@mui/icons-material/Phone";
 import BusinessIcon from "@mui/icons-material/Business";
 
+interface BecomeSellerFormStep1Props {
+    formik: any;
+}
 
-const BecomeSellerFormStep1 = ({ formik }: any) => {
+const fieldSx = {
+    "& .MuiOutlinedInput-root": {
+        borderRadius: 2,
+        backgroundColor: "#fafafa",
+    },
+};
 
+const BecomeSellerFormStep1: React.FC<BecomeSellerFormStep1Props> = ({ formik }) => {
     return (
         <Box sx={{ width: "100%" }}>
-
             {/* Heading */}
             <Box sx={{ mb: 3 }}>
-                <Typography
-                    variant="h5"
-                    sx={{
-                        fontWeight: 700,
-                        color: "#222",
-                        mb: 0.5
-                    }}
-                >
+                <Typography variant="h5" sx={{ fontWeight: 700, color: "#222", mb: 0.5 }}>
                     Contact Details
                 </Typography>
-
-                <Typography
-                    variant="body2"
-                    sx={{
-                        color: "#777"
-                    }}
-                >
+                <Typography variant="body2" sx={{ color: "#777" }}>
                     Enter your mobile number and GSTIN to get started.
                 </Typography>
             </Box>
-
 
             {/* Form Card */}
             <Paper
@@ -49,12 +40,10 @@ const BecomeSellerFormStep1 = ({ formik }: any) => {
                     p: { xs: 2, sm: 3 },
                     border: "1px solid #e5e5e5",
                     borderRadius: 3,
-                    backgroundColor: "#ffffff"
+                    backgroundColor: "#ffffff",
                 }}
             >
-
                 <div className="space-y-6">
-
                     {/* Mobile */}
                     <TextField
                         fullWidth
@@ -64,98 +53,56 @@ const BecomeSellerFormStep1 = ({ formik }: any) => {
                         value={formik.values.mobile}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        error={
-                            formik.touched.mobile &&
-                            Boolean(formik.errors.mobile)
-                        }
-                        helperText={
-                            formik.touched.mobile &&
-                            formik.errors.mobile
-                        }
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <PhoneIcon
-                                        sx={{ color: "#777" }}
-                                    />
-                                </InputAdornment>
-                            )
+                        error={Boolean(formik.touched.mobile && formik.errors.mobile)}
+                        helperText={formik.touched.mobile && formik.errors.mobile}
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <PhoneIcon sx={{ color: "#777" }} />
+                                    </InputAdornment>
+                                ),
+                            },
+                            htmlInput: { maxLength: 10, inputMode: "numeric" },
                         }}
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                borderRadius: 2,
-                                backgroundColor: "#fafafa"
-                            }
-                        }}
+                        sx={fieldSx}
                     />
-
 
                     {/* GSTIN */}
                     <TextField
                         fullWidth
                         name="gstin"
                         label="GSTIN"
-                        placeholder="Enter your GSTIN"
+                        placeholder="Enter your 15-character GSTIN"
                         value={formik.values.gstin}
-                        onChange={formik.handleChange}
+                        onChange={(e) =>
+                            formik.setFieldValue("gstin", e.target.value.toUpperCase())
+                        }
                         onBlur={formik.handleBlur}
-                        error={
-                            formik.touched.gstin &&
-                            Boolean(formik.errors.gstin)
-                        }
-                        helperText={
-                            formik.touched.gstin &&
-                            formik.errors.gstin
-                        }
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <BusinessIcon
-                                        sx={{ color: "#777" }}
-                                    />
-                                </InputAdornment>
-                            )
+                        error={Boolean(formik.touched.gstin && formik.errors.gstin)}
+                        helperText={formik.touched.gstin && formik.errors.gstin}
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <BusinessIcon sx={{ color: "#777" }} />
+                                    </InputAdornment>
+                                ),
+                            },
+                            htmlInput: { maxLength: 15 },
                         }}
-                        sx={{
-                            "& .MuiOutlinedInput-root": {
-                                borderRadius: 2,
-                                backgroundColor: "#fafafa"
-                            }
-                        }}
+                        sx={fieldSx}
                     />
-
                 </div>
-
             </Paper>
 
-
             {/* Bottom Information */}
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    mt: 2,
-                    px: 1
-                }}
-            >
-                <BusinessIcon
-                    sx={{
-                        fontSize: 18,
-                        color: "#999"
-                    }}
-                />
-
-                <Typography
-                    variant="caption"
-                    sx={{
-                        color: "#777"
-                    }}
-                >
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 2, px: 1 }}>
+                <BusinessIcon sx={{ fontSize: 18, color: "#999" }} />
+                <Typography variant="caption" sx={{ color: "#777" }}>
                     Your contact details will be used for seller verification.
                 </Typography>
             </Box>
-
         </Box>
     );
 };

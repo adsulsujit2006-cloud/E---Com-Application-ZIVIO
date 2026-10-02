@@ -19,15 +19,26 @@ import CategorySheet from "./CategorySheet";
 import { mainCategory } from "../../../data/category/mainCategory";
 import { useNavigate } from "react-router-dom";
 
-const Navbar = () => {
+const SELLER_DASHBOARD_ROUTE = "/seller";        // change if your dashboard route is different
+const BECOME_SELLER_ROUTE = "/become-seller";
 
+const Navbar = () => {
   const theme = useTheme();
   const isLarge = useMediaQuery(theme.breakpoints.up("lg"));
   const [selectedCategory, setSelectedCategory] = useState("men");
   const [showCategorySheet, setShowCategorySheet] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const categories = Array.isArray(mainCategory) ? mainCategory : [mainCategory];
+
+  // FIX: logged-in seller goes straight to the dashboard, others go to register/login
+  const handleSellerClick = () => {
+    if (localStorage.getItem("sellerJwt")) {
+      navigate(SELLER_DASHBOARD_ROUTE);
+    } else {
+      navigate(BECOME_SELLER_ROUTE);
+    }
+  };
 
   return (
     <>
@@ -36,22 +47,24 @@ const Navbar = () => {
 
           {/* Left Side */}
           <div className="flex items-center gap-9">
-            {!isLarge && <IconButton>
-              <MenuIcon />
-            </IconButton>
-            }
-            <h1 onClick={()=>navigate("/")} className="logo cursor-pointer text-lg md:text-3xl text-[#2F414A]">
+            {!isLarge && (
+              <IconButton>
+                <MenuIcon />
+              </IconButton>
+            )}
+            <h1
+              onClick={() => navigate("/")}
+              className="logo cursor-pointer text-lg md:text-3xl text-[#2F414A]"
+            >
               ZIVIO
             </h1>
-          </div >
+          </div>
 
           <ul className="flex items-center font-medium text-gray-800">
             {categories.map((item: any) => (
               <li
-
-                onMouseLeave={() => {
-                  setShowCategorySheet(false);
-                }}
+                key={item.categoryId} // FIX: missing key warning
+                onMouseLeave={() => setShowCategorySheet(false)}
                 onMouseEnter={() => {
                   setShowCategorySheet(true);
                   setSelectedCategory(item.categoryId);
@@ -61,69 +74,61 @@ const Navbar = () => {
                 {item.name}
               </li>
             ))}
-
-            <li></li>
           </ul>
+
           <div className="hidden md:flex items-center flex-1 max-w-[500px] h-[44px] bg-gray-100 border border-gray-300 rounded-lg overflow-hidden mx-6">
             <SearchIcon className="mx-3 text-gray-500" />
-
             <input
               type="text"
               placeholder="Search Products, Brands and More..."
               className="flex-1 h-full bg-transparent outline-none text-sm text-gray-700 placeholder:text-gray-500 pr-3"
             />
           </div>
+
           {/* Right Side */}
           <div className="flex gap-1 lg:gap-6 items-center">
-
-
             {true ? (
-              <Button onClick={()=>navigate("/account/Order")}
-              className="flex items-center gap-2">
-                <Avatar
-                  sx={{ width: 29, height: 29 }}
-                  src=""
-                />
-
-                <h1 className="font-semibold hidden lg:block">
-                  Login
-                </h1>
+              <Button
+                onClick={() => navigate("/account/Order")}
+                className="flex items-center gap-2"
+              >
+                <Avatar sx={{ width: 29, height: 29 }} src="" />
+                <h1 className="font-semibold hidden lg:block">Login</h1>
               </Button>
             ) : (
-              <Button variant="contained">
-                Login
-              </Button>
+              <Button variant="contained">Login</Button>
             )}
 
             <IconButton>
               <FavoriteBorder sx={{ fontSize: 20 }} />
             </IconButton>
 
-            <IconButton onClick={()=>navigate("/cart")}>
-              <AddShoppingCart
-                className="text-gray-700"
-                sx={{ fontSize: 20 }}
-              />
+            <IconButton onClick={() => navigate("/cart")}>
+              <AddShoppingCart className="text-gray-700" sx={{ fontSize: 20 }} />
             </IconButton>
 
             {isLarge && (
-              <Button onClick={()=>navigate("/become-seller")}
+              <Button
+                onClick={handleSellerClick} // FIX: was navigate("/become-seller")
                 startIcon={<Storefront />}
                 variant="outlined"
               >
                 Seller
               </Button>
             )}
-
           </div>
         </div>
-        {showCategorySheet && <div
-          onMouseLeave={() => setShowCategorySheet(false)}
-          onMouseEnter={() => setShowCategorySheet(true)}
-          className='categorySheet absolute top-[4.41rem] left-20 right-20'>
-          <CategorySheet selectedCategory={selectedCategory} />
-        </div>}
-      </Box >
+
+        {showCategorySheet && (
+          <div
+            onMouseLeave={() => setShowCategorySheet(false)}
+            onMouseEnter={() => setShowCategorySheet(true)}
+            className="categorySheet absolute top-[4.41rem] left-20 right-20"
+          >
+            <CategorySheet selectedCategory={selectedCategory} />
+          </div>
+        )}
+      </Box>
     </>
   );
 };

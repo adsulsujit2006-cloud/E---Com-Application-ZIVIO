@@ -1,6 +1,8 @@
 import { Divider, ListItemIcon, ListItemText } from "@mui/material";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../State/Store";
+import { logout } from "../State/Authslice";
 
 interface MenuItem {
     name: string;
@@ -29,6 +31,15 @@ const DrawerList = ({
         toggleDrawer();
     };
 
+    const dispatch = useAppDispatch();
+
+    const handleLogout = () => {
+        dispatch(logout(undefined)).then(() => {
+            toggleDrawer();
+            navigate("/");
+        });
+    };
+
     return (
         <div className="h-full">
             <div className="flex flex-col justify-between h-full w-[300px] border-r py-5">
@@ -38,7 +49,7 @@ const DrawerList = ({
 
                         {
                             menu.map((item, index: number) => (
-                                <div onClick={()=>handleClick(item.path)}
+                                <div onClick={() => handleClick(item.path)}
                                     className="pr-5 cursor-pointer"
                                     key={index}
                                 >
@@ -88,7 +99,13 @@ const DrawerList = ({
 
                         {
                             menu2.map((item, index: number) => (
-                                <div onClick={()=>handleClick(item.path)}
+                                <div onClick={() => {
+                                    if (item.path == null || item.name.toLowerCase() === "logout") {
+                                        handleLogout();
+                                    } else {
+                                        handleClick(item.path);
+                                    }
+                                }}
                                     className="pr-5 cursor-pointer"
                                     key={index}
                                 >
@@ -131,13 +148,13 @@ const DrawerList = ({
                             ))
                         }
 
-                    </div>
-                    
-                </div>
+                        </div>
 
+                    </div>
+
+                </div>
             </div>
         </div>
-                    </div>
     );
 };
 
